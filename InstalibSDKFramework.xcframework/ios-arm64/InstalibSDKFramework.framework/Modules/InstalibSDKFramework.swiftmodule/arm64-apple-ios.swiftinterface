@@ -1588,6 +1588,17 @@ extension Int : InstalibSDKFramework.Number, InstalibSDKFramework.Value {
   public typealias ValueType = Swift.Int
   public typealias Datatype = Swift.Int64
 }
+public struct BestTimeForPostModel {
+  public init()
+  public var totalComment: Swift.Int
+  public var totalLike: Swift.Int
+  public var totalView: Swift.Int
+  public var totalPost: Swift.Int
+  public var hour: Swift.Int
+  public var dayOfWeek: Swift.Int
+  public var ownerUserId: Swift.Int64?
+  public var groupItem: Swift.Int
+}
 final public class ChaCha20 {
   public enum Error : Swift.Error {
     case invalidKeyOrInitializationVector
@@ -2039,6 +2050,11 @@ public protocol IRepository {
   func getUserArchivedStoryBatch(userId: Swift.Int64)
   func getUserSuggestedUsersBatch(userId: Swift.Int64)
   func getUserPendingFriendRequestsBatch(userId: Swift.Int64)
+  func processUserMediaPopularDaysAndHours(userId: Swift.Int64)
+  func getBestPostDays(userId: Swift.Int64) -> [InstalibSDKFramework.BestTimeForPostModel]
+  func getBestPostHours(userId: Swift.Int64) -> [InstalibSDKFramework.BestTimeForPostModel]
+  func getBestPostDaysHours(userId: Swift.Int64) -> [InstalibSDKFramework.BestTimeForPostModel]
+  func getCloseFriends(userId: Swift.Int64, completionHandler: @escaping ([InstalibSDKFramework.EngagedUserWithMetadataModel]?) -> Swift.Void)
   func updateAppUser(appUser: InstalibSDKFramework.AppUserModel)
   func getDashboardStats(completionHandler: @escaping (InstalibSDKFramework.UserDashboardDetailView?) -> Swift.Void)
   func getTop5PopuplarMedias(completionHandler: @escaping ([InstalibSDKFramework.MediaModel]?) -> Swift.Void)
@@ -2047,6 +2063,7 @@ public protocol IRepository {
   func updatefollowingStateDb(engagedUser: InstalibSDKFramework.EngagedUserModel)
   func getFollowings(completionHandler: @escaping ([InstalibSDKFramework.EngagedUserWithMetadataModel]?) -> Swift.Void)
   func getFollowers(completionHandler: @escaping ([InstalibSDKFramework.EngagedUserWithMetadataModel]?) -> Swift.Void)
+  func getFollowersByAsc(completionHandler: @escaping ([InstalibSDKFramework.EngagedUserWithMetadataModel]?) -> Swift.Void)
   func getMostEngagedUsers(completionHandler: @escaping ([InstalibSDKFramework.EngagedUserWithMetadataModel]?) -> Swift.Void)
   func getMostCommentUsers(completionHandler: @escaping ([InstalibSDKFramework.EngagedUserWithMetadataModel]?) -> Swift.Void)
   func getMostLikeUsers(completionHandler: @escaping ([InstalibSDKFramework.EngagedUserWithMetadataModel]?) -> Swift.Void)
@@ -2065,6 +2082,7 @@ public protocol IRepository {
   func getFollowersYouNotFollow(completionHandler: @escaping ([InstalibSDKFramework.EngagedUserWithMetadataModel]?) -> Swift.Void)
   func getLikeOrCommentButNoFollowUsers(completionHandler: @escaping ([InstalibSDKFramework.EngagedUserWithMetadataModel]?) -> Swift.Void)
   func getNoLikeOrCommentUsers(completionHandler: @escaping ([InstalibSDKFramework.EngagedUserWithMetadataModel]?) -> Swift.Void)
+  func getNoLikeOrCommentFollowers(completionHandler: @escaping ([InstalibSDKFramework.EngagedUserWithMetadataModel]?) -> Swift.Void)
   func getYouMostLikedUsers(completionHandler: @escaping ([InstalibSDKFramework.EngagedUserWithMetadataModel]?) -> Swift.Void)
   func getYouLikedButNoFollowUsers(completionHandler: @escaping ([InstalibSDKFramework.EngagedUserWithMetadataModel]?) -> Swift.Void)
   func getTagYouUsers(completionHandler: @escaping ([InstalibSDKFramework.EngagedUserWithMetadataModel]?) -> Swift.Void)
@@ -2108,11 +2126,16 @@ public protocol IRepository {
   func getMediaUploadPerMonth(completionHandler: @escaping ([InstalibSDKFramework.StatisticsCounterModel]?) -> Swift.Void)
   func getCommentPerMonth(completionHandler: @escaping ([InstalibSDKFramework.StatisticsCounterModel]?) -> Swift.Void)
   func getLikePerMonth(completionHandler: @escaping ([InstalibSDKFramework.StatisticsCounterModel]?) -> Swift.Void)
+  func getMediaUploadPerWeek(completionHandler: @escaping ([InstalibSDKFramework.StatisticsCounterModel]?) -> Swift.Void)
+  func getCommentPerWeek(completionHandler: @escaping ([InstalibSDKFramework.StatisticsCounterModel]?) -> Swift.Void)
+  func getLikePerWeek(completionHandler: @escaping ([InstalibSDKFramework.StatisticsCounterModel]?) -> Swift.Void)
   func getLostFollowerPerMonth(completionHandler: @escaping ([InstalibSDKFramework.StatisticsCounterModel]?) -> Swift.Void)
   func getBlockFollowerPerMonth(completionHandler: @escaping ([InstalibSDKFramework.StatisticsCounterModel]?) -> Swift.Void)
   func getNewFollowerPerMonth(completionHandler: @escaping ([InstalibSDKFramework.StatisticsCounterModel]?) -> Swift.Void)
   func getStoryPerMonth(completionHandler: @escaping ([InstalibSDKFramework.StatisticsCounterModel]?) -> Swift.Void)
   func getStoryViewPerMonth(completionHandler: @escaping ([InstalibSDKFramework.StatisticsCounterModel]?) -> Swift.Void)
+  func getNewFollowerPerWeek(completionHandler: @escaping ([InstalibSDKFramework.StatisticsCounterModel]?) -> Swift.Void)
+  func getLostFollowerPerWeek(completionHandler: @escaping ([InstalibSDKFramework.StatisticsCounterModel]?) -> Swift.Void)
   func getDbUserAllPosts(completionHandler: @escaping ([InstalibSDKFramework.MediaModel]?) -> Swift.Void)
   func getDbUserAllVideoPosts(completionHandler: @escaping ([InstalibSDKFramework.MediaModel]?) -> Swift.Void)
   func getDbUserAllPhotoPosts(completionHandler: @escaping ([InstalibSDKFramework.MediaModel]?) -> Swift.Void)
@@ -2615,6 +2638,7 @@ public struct StatisticsCounterModel {
   public var ownerUserId: Swift.Int64
   public var count: Swift.Int
   public var monthYear: Swift.String
+  public var weekOfYear: Swift.String
 }
 public struct Status : Swift.Codable {
   public enum State {
@@ -3530,7 +3554,9 @@ public struct UserStoryViewCountModel {
 public struct MediaDeletedUserModel {
   public init()
   public var mediaId: Swift.String?
+  public var mediaModel: InstalibSDKFramework.MediaModel?
   public var createdAt: Swift.Int64?
+  public var commentText: Swift.String?
   public var userMetadataModel: InstalibSDKFramework.InstaUserMetadataModel?
   public var engagedUserModel: InstalibSDKFramework.EngagedUserModel?
 }
@@ -4275,6 +4301,7 @@ public struct EngagedUserModel {
   public var isBestFriend: Swift.Bool
   public var isBlockedByMe: Swift.Bool
   public var lastFollowStatChageDate: Swift.Int64
+  public var followerIndex: Swift.Int64?
 }
 public struct EngagedUserWithMetadataModel {
   public var userMetadataModel: InstalibSDKFramework.InstaUserMetadataModel?
