@@ -215,13 +215,11 @@ typedef unsigned int swift_uint4  __attribute__((__ext_vector_type__(4)));
 
 @class WKWebViewConfiguration;
 @class NSCoder;
-@class WKNavigation;
 
 SWIFT_CLASS("_TtC20InstalibSDKFramework12LoginWebView") SWIFT_AVAILABILITY(ios,introduced=12)
 @interface LoginWebView : WKWebView <WKNavigationDelegate>
 - (nonnull instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration * _Nonnull)configuration SWIFT_UNAVAILABLE;
 - (nullable instancetype)initWithCoder:(NSCoder * _Nonnull)coder OBJC_DESIGNATED_INITIALIZER SWIFT_UNAVAILABLE;
-- (void)webView:(WKWebView * _Nonnull)webView didFinishNavigation:(WKNavigation * _Null_unspecified)navigation;
 @end
 
 @class NSBundle;
