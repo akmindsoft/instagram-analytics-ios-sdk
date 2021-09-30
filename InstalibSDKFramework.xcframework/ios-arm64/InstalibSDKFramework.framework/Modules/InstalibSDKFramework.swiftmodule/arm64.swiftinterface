@@ -1,5 +1,5 @@
 // swift-interface-format-version: 1.0
-// swift-compiler-version: Apple Swift version 5.3.2 (swiftlang-1200.0.45 clang-1200.0.32.28)
+// swift-compiler-version: Apple Swift version 5.5 (swiftlang-1300.0.31.1 clang-1300.0.29.1)
 // swift-module-flags: -target arm64-apple-ios12.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name InstalibSDKFramework
 import CoreGraphics
 import Darwin
@@ -11,6 +11,7 @@ import Security
 import Swift
 import UIKit
 import WebKit
+import _Concurrency
 public struct MediaModel {
   public init()
   public var uid: Swift.Int
@@ -35,7 +36,7 @@ public protocol Cryptor {
 public protocol DeviceCollection {
   static var all: [InstalibSDKFramework.DeviceCollection & InstalibSDKFramework.DeviceGenerating] { get }
 }
-extension DeviceCollection {
+extension InstalibSDKFramework.DeviceCollection {
   public static func random() -> InstalibSDKFramework.Device!
 }
 public struct AnyDevice : InstalibSDKFramework.DeviceCollection {
@@ -52,12 +53,12 @@ public struct Blob {
   public init(bytes: Swift.UnsafeRawPointer, length: Swift.Int)
   public func toHex() -> Swift.String
 }
-extension Blob : Swift.CustomStringConvertible {
+extension InstalibSDKFramework.Blob : Swift.CustomStringConvertible {
   public var description: Swift.String {
     get
   }
 }
-extension Blob : Swift.Equatable {
+extension InstalibSDKFramework.Blob : Swift.Equatable {
 }
 public func == (lhs: InstalibSDKFramework.Blob, rhs: InstalibSDKFramework.Blob) -> Swift.Bool
 public enum ExploreElement : InstalibSDKFramework.ParsedResponse {
@@ -80,10 +81,10 @@ public enum Padding : InstalibSDKFramework.PaddingProtocol {
   public func add(to: Swift.Array<Swift.UInt8>, blockSize: Swift.Int) -> Swift.Array<Swift.UInt8>
   public func remove(from: Swift.Array<Swift.UInt8>, blockSize: Swift.Int?) -> Swift.Array<Swift.UInt8>
   public static func == (a: InstalibSDKFramework.Padding, b: InstalibSDKFramework.Padding) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
   public var hashValue: Swift.Int {
     get
   }
-  public func hash(into hasher: inout Swift.Hasher)
 }
 public struct StoryViewerModel {
   public init()
@@ -98,7 +99,7 @@ public struct StoryViewerWithMetadataModel {
   public var engagedUserModel: InstalibSDKFramework.EngagedUserModel?
   public var storyViewer: InstalibSDKFramework.StoryViewerModel?
 }
-extension Recipient {
+extension InstalibSDKFramework.Recipient {
   public enum Reference {
     case users(_: [Swift.Int])
     case thread(Swift.String)
@@ -121,18 +122,18 @@ final public class HMAC : InstalibSDKFramework.Authenticator {
     case authenticateError
     case invalidInput
     public static func == (a: InstalibSDKFramework.HMAC.Error, b: InstalibSDKFramework.HMAC.Error) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
     public var hashValue: Swift.Int {
       get
     }
-    public func hash(into hasher: inout Swift.Hasher)
   }
   public enum Variant {
     case sha1, sha256, sha384, sha512, md5
     public static func == (a: InstalibSDKFramework.HMAC.Variant, b: InstalibSDKFramework.HMAC.Variant) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
     public var hashValue: Swift.Int {
       get
     }
-    public func hash(into hasher: inout Swift.Hasher)
   }
   public init(key: Swift.Array<Swift.UInt8>, variant: InstalibSDKFramework.HMAC.Variant = .md5)
   final public func authenticate(_ bytes: Swift.Array<Swift.UInt8>) throws -> Swift.Array<Swift.UInt8>
@@ -163,8 +164,8 @@ public enum MediaType : Swift.String {
   case image
   case video
   case carousel
-  public typealias RawValue = Swift.String
   public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
     get
   }
@@ -183,16 +184,16 @@ public enum MediaType : Swift.String {
   final public func permalink(ofMedia mediaId: Swift.String, completionHandler: @escaping (Swift.Result<Swift.String, Swift.Error>) -> Swift.Void)
   @objc deinit
 }
-extension Blowfish {
+extension InstalibSDKFramework.Blowfish {
   convenience public init(key: Swift.String, iv: Swift.String, padding: InstalibSDKFramework.Padding = .pkcs7) throws
 }
 public struct Endpoint {
 }
-extension QueryType {
+extension InstalibSDKFramework.QueryType {
   public func insert(_ encodable: Swift.Encodable, userInfo: [Swift.CodingUserInfoKey : Any] = [:], otherSetters: [InstalibSDKFramework.Setter] = []) throws -> InstalibSDKFramework.Insert
   public func update(_ encodable: Swift.Encodable, userInfo: [Swift.CodingUserInfoKey : Any] = [:], otherSetters: [InstalibSDKFramework.Setter] = []) throws -> InstalibSDKFramework.Update
 }
-extension Row {
+extension InstalibSDKFramework.Row {
   public func decode<V>(userInfo: [Swift.CodingUserInfoKey : Any] = [:]) throws -> V where V : Swift.Decodable
   public func decoder(userInfo: [Swift.CodingUserInfoKey : Any] = [:]) -> Swift.Decoder
 }
@@ -209,7 +210,7 @@ public protocol SwiftyKey : AnyObject {
   func data() throws -> Foundation.Data
   func base64String() throws -> Swift.String
 }
-extension SwiftyKey {
+extension InstalibSDKFramework.SwiftyKey {
   public func base64String() throws -> Swift.String
   public func data() throws -> Foundation.Data
   public init(base64Encoded base64String: Swift.String) throws
@@ -265,15 +266,15 @@ public enum HTC : InstalibSDKFramework.DeviceCollection, InstalibSDKFramework.De
     get
   }
   public func generate() -> InstalibSDKFramework.Device
+  public static func == (a: InstalibSDKFramework.HTC, b: InstalibSDKFramework.HTC) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
   public typealias AllCases = [InstalibSDKFramework.HTC]
   public static var allCases: [InstalibSDKFramework.HTC] {
     get
   }
-  public static func == (a: InstalibSDKFramework.HTC, b: InstalibSDKFramework.HTC) -> Swift.Bool
   public var hashValue: Swift.Int {
     get
   }
-  public func hash(into hasher: inout Swift.Hasher)
 }
 public enum LG : Swift.CaseIterable, InstalibSDKFramework.DeviceCollection, InstalibSDKFramework.DeviceGenerating {
   case optimusF6
@@ -282,15 +283,15 @@ public enum LG : Swift.CaseIterable, InstalibSDKFramework.DeviceCollection, Inst
     get
   }
   public func generate() -> InstalibSDKFramework.Device
+  public static func == (a: InstalibSDKFramework.LG, b: InstalibSDKFramework.LG) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
   public typealias AllCases = [InstalibSDKFramework.LG]
   public static var allCases: [InstalibSDKFramework.LG] {
     get
   }
-  public static func == (a: InstalibSDKFramework.LG, b: InstalibSDKFramework.LG) -> Swift.Bool
   public var hashValue: Swift.Int {
     get
   }
-  public func hash(into hasher: inout Swift.Hasher)
 }
 public enum Samsung : Swift.CaseIterable, InstalibSDKFramework.DeviceCollection, InstalibSDKFramework.DeviceGenerating {
   case galaxyNote3
@@ -301,15 +302,15 @@ public enum Samsung : Swift.CaseIterable, InstalibSDKFramework.DeviceCollection,
     get
   }
   public func generate() -> InstalibSDKFramework.Device
+  public static func == (a: InstalibSDKFramework.Samsung, b: InstalibSDKFramework.Samsung) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
   public typealias AllCases = [InstalibSDKFramework.Samsung]
   public static var allCases: [InstalibSDKFramework.Samsung] {
     get
   }
-  public static func == (a: InstalibSDKFramework.Samsung, b: InstalibSDKFramework.Samsung) -> Swift.Bool
   public var hashValue: Swift.Int {
     get
   }
-  public func hash(into hasher: inout Swift.Hasher)
 }
 public enum Sony : Swift.CaseIterable, InstalibSDKFramework.DeviceCollection, InstalibSDKFramework.DeviceGenerating {
   case xperiaZ5
@@ -318,17 +319,17 @@ public enum Sony : Swift.CaseIterable, InstalibSDKFramework.DeviceCollection, In
     get
   }
   public func generate() -> InstalibSDKFramework.Device
+  public static func == (a: InstalibSDKFramework.Sony, b: InstalibSDKFramework.Sony) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
   public typealias AllCases = [InstalibSDKFramework.Sony]
   public static var allCases: [InstalibSDKFramework.Sony] {
     get
   }
-  public static func == (a: InstalibSDKFramework.Sony, b: InstalibSDKFramework.Sony) -> Swift.Bool
   public var hashValue: Swift.Int {
     get
   }
-  public func hash(into hasher: inout Swift.Hasher)
 }
-extension Error {
+extension Swift.Error {
   public var requiresInstagramCode: Swift.Bool {
     get
   }
@@ -376,13 +377,13 @@ public struct EngagedUserBookmarkedWithMetadataModel {
 public enum Bit : Swift.Int {
   case zero
   case one
-  public typealias RawValue = Swift.Int
   public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
   public var rawValue: Swift.Int {
     get
   }
 }
-extension Bit {
+extension InstalibSDKFramework.Bit {
   @inlinable internal func inverted() -> InstalibSDKFramework.Bit {
     self == .zero ? .one : .zero
   }
@@ -416,11 +417,11 @@ public struct User : InstalibSDKFramework.IdentifiableParsedResponse {
     case primaryKey(Swift.Int)
     case username(Swift.String)
     case me
+    public func hash(into hasher: inout Swift.Hasher)
+    public static func == (a: InstalibSDKFramework.User.Reference, b: InstalibSDKFramework.User.Reference) -> Swift.Bool
     public var hashValue: Swift.Int {
       get
     }
-    public func hash(into hasher: inout Swift.Hasher)
-    public static func == (a: InstalibSDKFramework.User.Reference, b: InstalibSDKFramework.User.Reference) -> Swift.Bool
   }
   public init?(rawResponse: InstalibSDKFramework.DynamicResponse)
   public let rawResponse: InstalibSDKFramework.DynamicResponse
@@ -634,16 +635,16 @@ public struct FollowRequestsResponseModel : InstalibSDKFramework.ParsedResponse 
   public init(from decoder: Swift.Decoder) throws
   public func encode(to encoder: Swift.Encoder) throws
 }
-extension PKCS5 {
+extension InstalibSDKFramework.PKCS5 {
   public struct PBKDF2 {
     public enum Error : Swift.Error {
       case invalidInput
       case derivedKeyTooLong
       public static func == (a: InstalibSDKFramework.PKCS5.PBKDF2.Error, b: InstalibSDKFramework.PKCS5.PBKDF2.Error) -> Swift.Bool
+      public func hash(into hasher: inout Swift.Hasher)
       public var hashValue: Swift.Int {
         get
       }
-      public func hash(into hasher: inout Swift.Hasher)
     }
     public init(password: Swift.Array<Swift.UInt8>, salt: Swift.Array<Swift.UInt8>, iterations: Swift.Int = 4096, keyLength: Swift.Int? = nil, variant: InstalibSDKFramework.HMAC.Variant = .sha256) throws
     public func calculate() throws -> Swift.Array<Swift.UInt8>
@@ -651,9 +652,9 @@ extension PKCS5 {
 }
 public protocol _UInt8Type {
 }
-extension UInt8 : InstalibSDKFramework._UInt8Type {
+extension Swift.UInt8 : InstalibSDKFramework._UInt8Type {
 }
-extension UInt8 {
+extension Swift.UInt8 {
   public func bits() -> [InstalibSDKFramework.Bit]
   public func bits() -> Swift.String
 }
@@ -703,7 +704,7 @@ final public class SHA1 {
   final internal func process(block chunk: Swift.ArraySlice<Swift.UInt8>, currentHash hh: inout Swift.ContiguousArray<Swift.UInt32>)
   @objc deinit
 }
-extension SHA1 : InstalibSDKFramework.Updatable {
+extension InstalibSDKFramework.SHA1 : InstalibSDKFramework.Updatable {
   @discardableResult
   @inlinable final public func update(withBytes bytes: Swift.ArraySlice<Swift.UInt8>, isLast: Swift.Bool = false) throws -> Swift.Array<Swift.UInt8> {
     self.accumulated += bytes
@@ -754,20 +755,20 @@ final public class OCB : InstalibSDKFramework.BlockMode {
     case combined
     case detached
     public static func == (a: InstalibSDKFramework.OCB.Mode, b: InstalibSDKFramework.OCB.Mode) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
     public var hashValue: Swift.Int {
       get
     }
-    public func hash(into hasher: inout Swift.Hasher)
   }
   final public let options: InstalibSDKFramework.BlockModeOption
   public enum Error : Swift.Error {
     case invalidNonce
     case fail
     public static func == (a: InstalibSDKFramework.OCB.Error, b: InstalibSDKFramework.OCB.Error) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
     public var hashValue: Swift.Int {
       get
     }
-    public func hash(into hasher: inout Swift.Hasher)
   }
   final public let customBlockSize: Swift.Int?
   final public var authenticationTag: Swift.Array<Swift.UInt8>?
@@ -800,7 +801,7 @@ final public class OCB : InstalibSDKFramework.BlockMode {
 
   return bytes
 }
-extension UInt64 {
+extension Swift.UInt64 {
   @_specialize(exported: false, kind: full, where T == Swift.ArraySlice<Swift.UInt8>)
   @inlinable internal init<T>(bytes: T, fromIndex index: T.Index) where T : Swift.Collection, T.Element == Swift.UInt8, T.Index == Swift.Int {
     if bytes.isEmpty {
@@ -841,7 +842,6 @@ extension UInt64 {
   @objc required public init(derNamed derName: Swift.String, in bundle: Foundation.Bundle) throws
   @objc public static func publicKeys(pemEncoded pemString: Swift.String) -> [InstalibSDKFramework._objc_PublicKey]
   @objc deinit
-  @objc override dynamic public init()
 }
 @objc(PrivateKey) public class _objc_PrivateKey : ObjectiveC.NSObject, InstalibSDKFramework.SwiftyKey {
   @objc public var reference: Security.SecKey {
@@ -861,12 +861,10 @@ extension UInt64 {
   @objc required public init(pemNamed pemName: Swift.String, in bundle: Foundation.Bundle) throws
   @objc required public init(derNamed derName: Swift.String, in bundle: Foundation.Bundle) throws
   @objc deinit
-  @objc override dynamic public init()
 }
 @_hasMissingDesignatedInitializers @objc(VerificationResult) public class _objc_VerificationResult : ObjectiveC.NSObject {
   @objc final public let isSuccessful: Swift.Bool
   @objc deinit
-  @objc override dynamic public init()
 }
 @objc(ClearMessage) public class _objc_ClearMessage : ObjectiveC.NSObject, InstalibSDKFramework.SwiftyRSAMessage {
   @objc public var base64String: Swift.String {
@@ -884,7 +882,6 @@ extension UInt64 {
   @objc public func signed(with key: InstalibSDKFramework._objc_PrivateKey, digestType: InstalibSDKFramework._objc_Signature.DigestType) throws -> InstalibSDKFramework._objc_Signature
   @objc public func verify(with key: InstalibSDKFramework._objc_PublicKey, signature: InstalibSDKFramework._objc_Signature, digestType: InstalibSDKFramework._objc_Signature.DigestType) throws -> InstalibSDKFramework._objc_VerificationResult
   @objc deinit
-  @objc override dynamic public init()
 }
 @objc(EncryptedMessage) public class _objc_EncryptedMessage : ObjectiveC.NSObject, InstalibSDKFramework.SwiftyRSAMessage {
   @objc public var base64String: Swift.String {
@@ -898,7 +895,6 @@ extension UInt64 {
   @objc required public init(base64Encoded base64String: Swift.String) throws
   @objc public func decrypted(with key: InstalibSDKFramework._objc_PrivateKey, padding: InstalibSDKFramework.SwiftyRSAPadding) throws -> InstalibSDKFramework._objc_ClearMessage
   @objc deinit
-  @objc override dynamic public init()
 }
 @objc(Signature) public class _objc_Signature : ObjectiveC.NSObject {
   @objc public enum DigestType : Swift.Int {
@@ -907,8 +903,8 @@ extension UInt64 {
     case sha256
     case sha384
     case sha512
-    public typealias RawValue = Swift.Int
     public init?(rawValue: Swift.Int)
+    public typealias RawValue = Swift.Int
     public var rawValue: Swift.Int {
       get
     }
@@ -923,7 +919,6 @@ extension UInt64 {
   @objc public init(data: Foundation.Data)
   @objc required public init(base64Encoded base64String: Swift.String) throws
   @objc deinit
-  @objc override dynamic public init()
 }
 @_hasMissingDesignatedInitializers open class SwKeyStore {
   public enum SecError : Darwin.OSStatus, Swift.Error {
@@ -938,8 +933,8 @@ extension UInt64 {
     case decode
     case missingEntitlement
     public static var debugLevel: Swift.Int
-    public typealias RawValue = Darwin.OSStatus
     public init?(rawValue: Darwin.OSStatus)
+    public typealias RawValue = Darwin.OSStatus
     public var rawValue: Darwin.OSStatus {
       get
     }
@@ -956,10 +951,10 @@ extension UInt64 {
     case keyNotEncrypted
     public static var debugLevel: Swift.Int
     public static func == (a: InstalibSDKFramework.SwKeyConvert.SwError, b: InstalibSDKFramework.SwKeyConvert.SwError) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
     public var hashValue: Swift.Int {
       get
     }
-    public func hash(into hasher: inout Swift.Hasher)
   }
   @_hasMissingDesignatedInitializers open class PrivateKey {
     public static func pemToPKCS1DER(_ pemKey: Swift.String) throws -> Foundation.Data
@@ -1015,10 +1010,10 @@ extension UInt64 {
     public enum EncMode {
       case aes128CBC, aes256CBC
       public static func == (a: InstalibSDKFramework.PEM.EncryptedPrivateKey.EncMode, b: InstalibSDKFramework.PEM.EncryptedPrivateKey.EncMode) -> Swift.Bool
+      public func hash(into hasher: inout Swift.Hasher)
       public var hashValue: Swift.Int {
         get
       }
-      public func hash(into hasher: inout Swift.Hasher)
     }
     public static func toDER(_ pemKey: Swift.String, passphrase: Swift.String) throws -> Foundation.Data
     public static func toPEM(_ derKey: Foundation.Data, passphrase: Swift.String, mode: InstalibSDKFramework.PEM.EncryptedPrivateKey.EncMode) -> Swift.String
@@ -1042,8 +1037,8 @@ extension UInt64 {
     case keySizeError
     case invalidKey
     public static var debugLevel: Swift.Int
-    public typealias RawValue = InstalibSDKFramework.CC.CCCryptorStatus
     public init?(rawValue: InstalibSDKFramework.CC.CCCryptorStatus)
+    public typealias RawValue = InstalibSDKFramework.CC.CCCryptorStatus
     public var rawValue: InstalibSDKFramework.CC.CCCryptorStatus {
       get
     }
@@ -1056,8 +1051,8 @@ extension UInt64 {
     case rmd128, rmd160, rmd256, rmd320
     case sha1
     case sha224, sha256, sha384, sha512
-    public typealias RawValue = InstalibSDKFramework.CC.CCDigestAlgorithm
     public init?(rawValue: InstalibSDKFramework.CC.CCDigestAlgorithm)
+    public typealias RawValue = InstalibSDKFramework.CC.CCDigestAlgorithm
     public var rawValue: InstalibSDKFramework.CC.CCDigestAlgorithm {
       get
     }
@@ -1066,8 +1061,8 @@ extension UInt64 {
   public typealias CCHmacAlgorithm = Swift.UInt32
   public enum HMACAlg : InstalibSDKFramework.CC.CCHmacAlgorithm {
     case sha1, md5, sha256, sha384, sha512, sha224
-    public typealias RawValue = InstalibSDKFramework.CC.CCHmacAlgorithm
     public init?(rawValue: InstalibSDKFramework.CC.CCHmacAlgorithm)
+    public typealias RawValue = InstalibSDKFramework.CC.CCHmacAlgorithm
     public var rawValue: InstalibSDKFramework.CC.CCHmacAlgorithm {
       get
     }
@@ -1076,8 +1071,8 @@ extension UInt64 {
   public typealias CCOperation = Swift.UInt32
   public enum OpMode : InstalibSDKFramework.CC.CCOperation {
     case encrypt, decrypt
-    public typealias RawValue = InstalibSDKFramework.CC.CCOperation
     public init?(rawValue: InstalibSDKFramework.CC.CCOperation)
+    public typealias RawValue = InstalibSDKFramework.CC.CCOperation
     public var rawValue: InstalibSDKFramework.CC.CCOperation {
       get
     }
@@ -1085,16 +1080,16 @@ extension UInt64 {
   public typealias CCMode = Swift.UInt32
   public enum BlockMode : InstalibSDKFramework.CC.CCMode {
     case ecb, cbc, cfb, ctr, f8, lrw, ofb, xts, rc4, cfb8
-    public typealias RawValue = InstalibSDKFramework.CC.CCMode
     public init?(rawValue: InstalibSDKFramework.CC.CCMode)
+    public typealias RawValue = InstalibSDKFramework.CC.CCMode
     public var rawValue: InstalibSDKFramework.CC.CCMode {
       get
     }
   }
   public enum AuthBlockMode : InstalibSDKFramework.CC.CCMode {
     case gcm, ccm
-    public typealias RawValue = InstalibSDKFramework.CC.CCMode
     public init?(rawValue: InstalibSDKFramework.CC.CCMode)
+    public typealias RawValue = InstalibSDKFramework.CC.CCMode
     public var rawValue: InstalibSDKFramework.CC.CCMode {
       get
     }
@@ -1102,8 +1097,8 @@ extension UInt64 {
   public typealias CCAlgorithm = Swift.UInt32
   public enum Algorithm : InstalibSDKFramework.CC.CCAlgorithm {
     case aes, des, threeDES, cast, rc4, rc2, blowfish
-    public typealias RawValue = InstalibSDKFramework.CC.CCAlgorithm
     public init?(rawValue: InstalibSDKFramework.CC.CCAlgorithm)
+    public typealias RawValue = InstalibSDKFramework.CC.CCAlgorithm
     public var rawValue: InstalibSDKFramework.CC.CCAlgorithm {
       get
     }
@@ -1111,8 +1106,8 @@ extension UInt64 {
   public typealias CCPadding = Swift.UInt32
   public enum Padding : InstalibSDKFramework.CC.CCPadding {
     case noPadding, pkcs7Padding
-    public typealias RawValue = InstalibSDKFramework.CC.CCPadding
     public init?(rawValue: InstalibSDKFramework.CC.CCPadding)
+    public typealias RawValue = InstalibSDKFramework.CC.CCPadding
     public var rawValue: InstalibSDKFramework.CC.CCPadding {
       get
     }
@@ -1139,8 +1134,8 @@ extension UInt64 {
     public enum AsymmetricPadding : InstalibSDKFramework.CC.RSA.CCAsymmetricPadding {
       case pkcs1
       case oaep
-      public typealias RawValue = InstalibSDKFramework.CC.RSA.CCAsymmetricPadding
       public init?(rawValue: InstalibSDKFramework.CC.RSA.CCAsymmetricPadding)
+      public typealias RawValue = InstalibSDKFramework.CC.RSA.CCAsymmetricPadding
       public var rawValue: InstalibSDKFramework.CC.RSA.CCAsymmetricPadding {
         get
       }
@@ -1148,8 +1143,8 @@ extension UInt64 {
     public enum AsymmetricSAPadding : Swift.UInt32 {
       case pkcs15
       case pss
-      public typealias RawValue = Swift.UInt32
       public init?(rawValue: Swift.UInt32)
+      public typealias RawValue = Swift.UInt32
       public var rawValue: Swift.UInt32 {
         get
       }
@@ -1168,10 +1163,10 @@ extension UInt64 {
       case rfc3526Group5
       case rfc2409Group2
       public static func == (a: InstalibSDKFramework.CC.DH.DHParam, b: InstalibSDKFramework.CC.DH.DHParam) -> Swift.Bool
+      public func hash(into hasher: inout Swift.Hasher)
       public var hashValue: Swift.Int {
         get
       }
-      public func hash(into hasher: inout Swift.Hasher)
     }
     open class DH {
       public init(dhParam: InstalibSDKFramework.CC.DH.DHParam) throws
@@ -1205,8 +1200,8 @@ extension UInt64 {
     public typealias CNcrc = Swift.UInt32
     public enum Mode : InstalibSDKFramework.CC.CRC.CNcrc {
       case crc8, crc8ICODE, crc8ITU, crc8ROHC, crc8WCDMA, crc16, crc16CCITTTrue, crc16CCITTFalse, crc16USB, crc16XMODEM, crc16DECTR, crc16DECTX, crc16ICODE, crc16VERIFONE, crc16A, crc16B, crc16Fletcher, crc32Adler, crc32, crc32CASTAGNOLI, crc32BZIP2, crc32MPEG2, crc32POSIX, crc32XFER, crc64ECMA182
-      public typealias RawValue = InstalibSDKFramework.CC.CRC.CNcrc
       public init?(rawValue: InstalibSDKFramework.CC.CRC.CNcrc)
+      public typealias RawValue = InstalibSDKFramework.CC.CRC.CNcrc
       public var rawValue: InstalibSDKFramework.CC.CRC.CNcrc {
         get
       }
@@ -1224,8 +1219,8 @@ extension UInt64 {
     public typealias CCPseudoRandomAlgorithm = Swift.UInt32
     public enum PRFAlg : InstalibSDKFramework.CC.KeyDerivation.CCPseudoRandomAlgorithm {
       case sha1, sha224, sha256, sha384, sha512
-      public typealias RawValue = InstalibSDKFramework.CC.KeyDerivation.CCPseudoRandomAlgorithm
       public init?(rawValue: InstalibSDKFramework.CC.KeyDerivation.CCPseudoRandomAlgorithm)
+      public typealias RawValue = InstalibSDKFramework.CC.KeyDerivation.CCPseudoRandomAlgorithm
       public var rawValue: InstalibSDKFramework.CC.KeyDerivation.CCPseudoRandomAlgorithm {
         get
       }
@@ -1243,11 +1238,11 @@ extension UInt64 {
   }
   @objc deinit
 }
-extension Data {
+extension Foundation.Data {
   public func hexadecimalString() -> Swift.String
   public func arrayOfBytes() -> [Swift.UInt8]
 }
-extension String {
+extension Swift.String {
   public func dataFromHexadecimalString() -> Foundation.Data?
 }
 @_hasMissingDesignatedInitializers final public class AEADChaCha20Poly1305 : InstalibSDKFramework.AEAD {
@@ -1297,7 +1292,7 @@ final public class Checksum {
   }
   @objc deinit
 }
-extension Checksum {
+extension InstalibSDKFramework.Checksum {
   @inlinable public static func crc32(_ message: Swift.Array<Swift.UInt8>, seed: Swift.UInt32? = nil, reflect: Swift.Bool = true) -> Swift.UInt32 {
     Checksum().crc32(message, seed: seed, reflect: reflect)
   }
@@ -1314,12 +1309,12 @@ public enum Collation {
   case rtrim
   case custom(Swift.String)
 }
-extension Collation : InstalibSDKFramework.Expressible {
+extension InstalibSDKFramework.Collation : InstalibSDKFramework.Expressible {
   public var expression: InstalibSDKFramework.Expression<Swift.Void> {
     get
   }
 }
-extension Collation : Swift.CustomStringConvertible {
+extension InstalibSDKFramework.Collation : Swift.CustomStringConvertible {
   public var description: Swift.String {
     get
   }
@@ -1429,7 +1424,7 @@ public struct ECB : InstalibSDKFramework.BlockMode {
   public init()
   public func worker(blockSize: Swift.Int, cipherOperation: @escaping InstalibSDKFramework.CipherOperationOnBlock, encryptionOperation: @escaping InstalibSDKFramework.CipherOperationOnBlock) throws -> InstalibSDKFramework.CipherModeWorker
 }
-extension UInt32 {
+extension Swift.UInt32 {
   @_specialize(exported: false, kind: full, where T == Swift.ArraySlice<Swift.UInt8>)
   @inlinable internal init<T>(bytes: T, fromIndex index: T.Index) where T : Swift.Collection, T.Element == Swift.UInt8, T.Index == Swift.Int {
     if bytes.isEmpty {
@@ -1543,25 +1538,25 @@ public struct UserStatsModel {
   public var weekMonthYear: Swift.String?
 }
 @objc @_hasMissingDesignatedInitializers @available(iOS 12, *)
-public class LoginWebViewController : UIKit.UIViewController {
-  final public let handler: InstalibSDKFramework.APIHandler
-  public var completionHandler: (InstalibSDKFramework.LoginWebViewController, Swift.Result<(InstalibSDKFramework.Authentication.Response, InstalibSDKFramework.APIHandler), Swift.Error>) -> Swift.Void
-  public var indicator: UIKit.UIActivityIndicatorView! {
+@_Concurrency.MainActor(unsafe) public class LoginWebViewController : UIKit.UIViewController {
+  @_Concurrency.MainActor(unsafe) final public let handler: InstalibSDKFramework.APIHandler
+  @_Concurrency.MainActor(unsafe) public var completionHandler: (InstalibSDKFramework.LoginWebViewController, Swift.Result<(InstalibSDKFramework.Authentication.Response, InstalibSDKFramework.APIHandler), Swift.Error>) -> Swift.Void
+  @_Concurrency.MainActor(unsafe) public var dissmisHandler: () -> Swift.Void
+  @_Concurrency.MainActor(unsafe) public var indicator: UIKit.UIActivityIndicatorView! {
     get
     set
   }
-  public var webView: InstalibSDKFramework.LoginWebView! {
+  @_Concurrency.MainActor(unsafe) public var webView: InstalibSDKFramework.LoginWebView! {
     get
     set
   }
   @available(*, unavailable, message: "using a custom `userAgent` is no longer supported")
-  public init(userAgent: Swift.String?, completionHandler: @escaping (InstalibSDKFramework.LoginWebViewController, Swift.Result<(InstalibSDKFramework.Authentication.Response, InstalibSDKFramework.APIHandler), Swift.Error>) -> Swift.Void)
-  public init(completionHandler: @escaping (InstalibSDKFramework.LoginWebViewController, Swift.Result<(InstalibSDKFramework.Authentication.Response, InstalibSDKFramework.APIHandler), Swift.Error>) -> Swift.Void)
-  @objc override dynamic public func viewDidLoad()
+  @_Concurrency.MainActor(unsafe) public init(userAgent: Swift.String?, completionHandler: @escaping (InstalibSDKFramework.LoginWebViewController, Swift.Result<(InstalibSDKFramework.Authentication.Response, InstalibSDKFramework.APIHandler), Swift.Error>) -> Swift.Void)
+  @_Concurrency.MainActor(unsafe) public init(completionHandler: @escaping (InstalibSDKFramework.LoginWebViewController, Swift.Result<(InstalibSDKFramework.Authentication.Response, InstalibSDKFramework.APIHandler), Swift.Error>) -> Swift.Void, dissmisHandler: @escaping () -> Swift.Void)
+  @_Concurrency.MainActor(unsafe) @objc override dynamic public func viewDidLoad()
   @objc deinit
-  @objc override dynamic public init(nibName nibNameOrNil: Swift.String?, bundle nibBundleOrNil: Foundation.Bundle?)
 }
-extension ExpressionType where Self.UnderlyingType : InstalibSDKFramework.Value {
+extension InstalibSDKFramework.ExpressionType where Self.UnderlyingType : InstalibSDKFramework.Value {
   public var distinct: InstalibSDKFramework.Expression<Self.UnderlyingType> {
     get
   }
@@ -1569,7 +1564,7 @@ extension ExpressionType where Self.UnderlyingType : InstalibSDKFramework.Value 
     get
   }
 }
-extension ExpressionType where Self.UnderlyingType : InstalibSDKFramework._OptionalType, Self.UnderlyingType.WrappedType : InstalibSDKFramework.Value {
+extension InstalibSDKFramework.ExpressionType where Self.UnderlyingType : InstalibSDKFramework._OptionalType, Self.UnderlyingType.WrappedType : InstalibSDKFramework.Value {
   public var distinct: InstalibSDKFramework.Expression<Self.UnderlyingType> {
     get
   }
@@ -1577,7 +1572,7 @@ extension ExpressionType where Self.UnderlyingType : InstalibSDKFramework._Optio
     get
   }
 }
-extension ExpressionType where Self.UnderlyingType : InstalibSDKFramework.Value, Self.UnderlyingType.Datatype : Swift.Comparable {
+extension InstalibSDKFramework.ExpressionType where Self.UnderlyingType : InstalibSDKFramework.Value, Self.UnderlyingType.Datatype : Swift.Comparable {
   public var max: InstalibSDKFramework.Expression<Self.UnderlyingType?> {
     get
   }
@@ -1585,7 +1580,7 @@ extension ExpressionType where Self.UnderlyingType : InstalibSDKFramework.Value,
     get
   }
 }
-extension ExpressionType where Self.UnderlyingType : InstalibSDKFramework._OptionalType, Self.UnderlyingType.WrappedType : InstalibSDKFramework.Value, Self.UnderlyingType.WrappedType.Datatype : Swift.Comparable {
+extension InstalibSDKFramework.ExpressionType where Self.UnderlyingType : InstalibSDKFramework._OptionalType, Self.UnderlyingType.WrappedType : InstalibSDKFramework.Value, Self.UnderlyingType.WrappedType.Datatype : Swift.Comparable {
   public var max: InstalibSDKFramework.Expression<Self.UnderlyingType> {
     get
   }
@@ -1593,7 +1588,7 @@ extension ExpressionType where Self.UnderlyingType : InstalibSDKFramework._Optio
     get
   }
 }
-extension ExpressionType where Self.UnderlyingType : InstalibSDKFramework.Value, Self.UnderlyingType.Datatype : InstalibSDKFramework.Number {
+extension InstalibSDKFramework.ExpressionType where Self.UnderlyingType : InstalibSDKFramework.Value, Self.UnderlyingType.Datatype : InstalibSDKFramework.Number {
   public var average: InstalibSDKFramework.Expression<Swift.Double?> {
     get
   }
@@ -1604,7 +1599,7 @@ extension ExpressionType where Self.UnderlyingType : InstalibSDKFramework.Value,
     get
   }
 }
-extension ExpressionType where Self.UnderlyingType : InstalibSDKFramework._OptionalType, Self.UnderlyingType.WrappedType : InstalibSDKFramework.Value, Self.UnderlyingType.WrappedType.Datatype : InstalibSDKFramework.Number {
+extension InstalibSDKFramework.ExpressionType where Self.UnderlyingType : InstalibSDKFramework._OptionalType, Self.UnderlyingType.WrappedType : InstalibSDKFramework.Value, Self.UnderlyingType.WrappedType.Datatype : InstalibSDKFramework.Number {
   public var average: InstalibSDKFramework.Expression<Swift.Double?> {
     get
   }
@@ -1616,6 +1611,126 @@ extension ExpressionType where Self.UnderlyingType : InstalibSDKFramework._Optio
   }
 }
 public func count(_ star: (InstalibSDKFramework.Expression<InstalibSDKFramework.SQLiteBinding>?, InstalibSDKFramework.Expression<InstalibSDKFramework.SQLiteBinding>?) -> InstalibSDKFramework.Expression<Swift.Void>) -> InstalibSDKFramework.Expression<Swift.Int>
+public protocol IDBRepository {
+  func updateUserStatsBatch(userId: Swift.Int64)
+  func processUserMediaPopularDaysAndHours(userId: Swift.Int64)
+  func getBestPostDays(userId: Swift.Int64) -> [InstalibSDKFramework.BestTimeForPostModel]
+  func getBestPostHours(userId: Swift.Int64) -> [InstalibSDKFramework.BestTimeForPostModel]
+  func getBestPostDaysHours(userId: Swift.Int64) -> [InstalibSDKFramework.BestTimeForPostModel]
+  func getCloseFriends(userId: Swift.Int64) -> [InstalibSDKFramework.EngagedUserWithMetadataModel]
+  func updateAppUser(appUser: InstalibSDKFramework.AppUserModel)
+  func getDashboardStats() -> InstalibSDKFramework.UserDashboardDetailView?
+  func getTop5PopuplarMedias() -> [InstalibSDKFramework.MediaModel]
+  func getMostEngagedTop5UsersWithMetadata() -> [InstalibSDKFramework.EngagedUserWithMetadataModel]
+  func getUserDetails(userId: Swift.Int64) -> InstalibSDKFramework.EngagedUserWithMetadataModel?
+  func updatefollowingStateDb(engagedUser: InstalibSDKFramework.EngagedUserModel)
+  func getFollowings() -> [InstalibSDKFramework.EngagedUserWithMetadataModel]
+  func getFollowers() -> [InstalibSDKFramework.EngagedUserWithMetadataModel]
+  func getFollowersByAsc() -> [InstalibSDKFramework.EngagedUserWithMetadataModel]
+  func getMostEngagedUsers() -> [InstalibSDKFramework.EngagedUserWithMetadataModel]
+  func getMostCommentUsers() -> [InstalibSDKFramework.EngagedUserWithMetadataModel]
+  func getMostLikeUsers() -> [InstalibSDKFramework.EngagedUserWithMetadataModel]
+  func getLeastEngagedUsers() -> [InstalibSDKFramework.EngagedUserWithMetadataModel]
+  func getLeastCommentUsers() -> [InstalibSDKFramework.EngagedUserWithMetadataModel]
+  func getLeastLikeUsers() -> [InstalibSDKFramework.EngagedUserWithMetadataModel]
+  func getUserStatsLimit(limit: Swift.Int) -> [InstalibSDKFramework.UserStatsModel]
+  func getUserStats() -> [InstalibSDKFramework.UserStatsModel]
+  func getUserStatByDate() -> [InstalibSDKFramework.UserStatsModel]
+  func getLostUsers() -> [InstalibSDKFramework.EngagedUserWithMetadataModel]
+  func getGainedUsers() -> [InstalibSDKFramework.EngagedUserWithMetadataModel]
+  func getBlockMeUsers() -> [InstalibSDKFramework.EngagedUserWithMetadataModel]
+  func getClosedAccounts() -> [InstalibSDKFramework.EngagedUserWithMetadataModel]
+  func getFollowingsNotFollowYou() -> [InstalibSDKFramework.EngagedUserWithMetadataModel]
+  func getFollowersYouFollow() -> [InstalibSDKFramework.EngagedUserWithMetadataModel]
+  func getFollowersYouNotFollow() -> [InstalibSDKFramework.EngagedUserWithMetadataModel]
+  func getLikeOrCommentButNoFollowUsers() -> [InstalibSDKFramework.EngagedUserWithMetadataModel]
+  func getNoLikeOrCommentUsers() -> [InstalibSDKFramework.EngagedUserWithMetadataModel]
+  func getNoLikeOrCommentFollowers() -> [InstalibSDKFramework.EngagedUserWithMetadataModel]
+  func getYouMostLikedUsers() -> [InstalibSDKFramework.EngagedUserWithMetadataModel]
+  func getYouLikedButNoFollowUsers() -> [InstalibSDKFramework.EngagedUserWithMetadataModel]
+  func getTagYouUsers() -> [InstalibSDKFramework.EngagedUserWithMetadataModel]
+  func getUserActiveStories() -> [InstalibSDKFramework.StoryDbModel]
+  func getArchivedStories() -> [InstalibSDKFramework.StoryDbModel]
+  func getStoryViewers(storyId: Swift.String) -> [InstalibSDKFramework.StoryViewerWithMetadataModel]
+  func getNotFolloweLeastViewedCount() -> [InstalibSDKFramework.UserStoryViewCountModel]
+  func getNotFollowMeViewedStory() -> [InstalibSDKFramework.UserStoryViewCountModel]
+  func getFollowerMostViewedCount() -> [InstalibSDKFramework.UserStoryViewCountModel]
+  func getFollowerLeastViewedCount() -> [InstalibSDKFramework.UserStoryViewCountModel]
+  func getLeastViewedStories() -> [InstalibSDKFramework.StoryDbModel]
+  func getMostViewedStories() -> [InstalibSDKFramework.StoryDbModel]
+  func storiesUpdateAllDefaultToFalse()
+  func insertStories(models: [InstalibSDKFramework.StoryDbModel])
+  func getStoryById(id: Swift.String) -> InstalibSDKFramework.StoryDbModel?
+  func updateStory(model: InstalibSDKFramework.StoryDbModel)
+  func getDefaultAppUser() -> InstalibSDKFramework.AppUserModel?
+  func deleteByUserId(uid: Swift.Int)
+  func getAllUsers() -> [InstalibSDKFramework.AppUserModel]
+  func updateUsers(models: [InstalibSDKFramework.AppUserModel])
+  func updateAllDefaultToFalse()
+  func insertAppUser(model: InstalibSDKFramework.AppUserModel) -> Swift.Int64
+  func getEngagedUser(userId: Swift.Int64) -> InstalibSDKFramework.EngagedUserModel?
+  func updateEngagedUser(model: InstalibSDKFramework.EngagedUserModel)
+  func insertUser(model: InstalibSDKFramework.InstaUserMetadataModel) -> Swift.Int64
+  func insertUserEngagement(model: InstalibSDKFramework.EngagedUserModel) -> Swift.Int64
+  func getYourBesties() -> [InstalibSDKFramework.EngagedUserWithMetadataModel]
+  func insertUserStats(model: InstalibSDKFramework.UserStatsModel)
+  func getMostLikedMedias() -> [InstalibSDKFramework.MediaModel]
+  func getMostCommentedMedias() -> [InstalibSDKFramework.MediaModel]
+  func getMostPopularMedias() -> [InstalibSDKFramework.MediaModel]
+  func getMostViewedMedias() -> [InstalibSDKFramework.MediaModel]
+  func getLeastLikedMedias() -> [InstalibSDKFramework.MediaModel]
+  func getLeastCommentedMedias() -> [InstalibSDKFramework.MediaModel]
+  func getLeastPopularMedias() -> [InstalibSDKFramework.MediaModel]
+  func getLeastViewedMedias() -> [InstalibSDKFramework.MediaModel]
+  func getUsersDeleteComment() -> [InstalibSDKFramework.MediaDeletedUserModel]
+  func getUsersDeleteLike() -> [InstalibSDKFramework.MediaDeletedUserModel]
+  func getUsersDeleteLikeOrComment() -> [InstalibSDKFramework.MediaDeletedUserModel]
+  func getMediaUploadPerMonth() -> [InstalibSDKFramework.StatisticsCounterModel]
+  func getCommentPerMonth() -> [InstalibSDKFramework.StatisticsCounterModel]
+  func getLikePerMonth() -> [InstalibSDKFramework.StatisticsCounterModel]
+  func getMediaUploadPerWeek() -> [InstalibSDKFramework.StatisticsCounterModel]
+  func getCommentPerWeek() -> [InstalibSDKFramework.StatisticsCounterModel]
+  func getLikePerWeek() -> [InstalibSDKFramework.StatisticsCounterModel]
+  func getLostFollowerPerMonth() -> [InstalibSDKFramework.StatisticsCounterModel]
+  func getBlockFollowerPerMonth() -> [InstalibSDKFramework.StatisticsCounterModel]
+  func getNewFollowerPerMonth() -> [InstalibSDKFramework.StatisticsCounterModel]
+  func getStoryPerMonth() -> [InstalibSDKFramework.StatisticsCounterModel]
+  func getStoryViewPerMonth() -> [InstalibSDKFramework.StatisticsCounterModel]
+  func getNewFollowerPerWeek() -> [InstalibSDKFramework.StatisticsCounterModel]
+  func getLostFollowerPerWeek() -> [InstalibSDKFramework.StatisticsCounterModel]
+  func getDbUserAllPosts() -> [InstalibSDKFramework.MediaModel]
+  func getDbUserAllVideoPosts() -> [InstalibSDKFramework.MediaModel]
+  func getDbUserAllPhotoPosts() -> [InstalibSDKFramework.MediaModel]
+  func getDbUserAllStories() -> [InstalibSDKFramework.StoryDbModel]
+  func getAllSuggestedUsers() -> [InstalibSDKFramework.SuggestedUserModel]
+  func getBlockedByMeUsers() -> [InstalibSDKFramework.EngagedUserWithMetadataModel]
+  func getUsersDeleteTag() -> [InstalibSDKFramework.UserTagWithMetadataModel]
+  func getYouUnfollows() -> [InstalibSDKFramework.EngagedUserWithMetadataModel]
+  func getNotifications() -> [InstalibSDKFramework.NotificationEntityModel]
+  func deleteAllNotifications()
+  func deleteNotification(uid: Swift.Int?)
+  func deleteNotification(type: InstalibSDKFramework.NotificationTypes)
+  func getStalkerCandidates() -> [InstalibSDKFramework.StalkerCandidateWithMetadataModel]
+  func updateAllStalkersSeen()
+  func clearUserHistory()
+  func logoutUser() -> InstalibSDKFramework.AppUserModel!
+  func getFavUsers() -> [InstalibSDKFramework.EngagedUserBookmarkedWithMetadataModel]
+  func insertBookmarkedUser(_ model: InstalibSDKFramework.EngagedUserBookmarkedModel) -> Swift.Int64?
+  func deleteBookmark(_ model: InstalibSDKFramework.EngagedUserBookmarkedModel)
+  func insertFollowStateChangeLog(_ model: InstalibSDKFramework.FollowerStateChangeLogModel)
+  func updateUserProfilePhoto(_ userId: Swift.Int64, _ profilePicUrl: Swift.String)
+  func getStalkerCandidate(ownerUserId: Swift.Int64, userId: Swift.Int64) -> InstalibSDKFramework.StalkerCandidateEntityModel?
+  func insertStalker(_ model: InstalibSDKFramework.StalkerCandidateEntityModel)
+  func updateStalker(_ model: InstalibSDKFramework.StalkerCandidateEntityModel)
+  func getCommentersUsers(mediaId: Swift.String?, ownerUserId: Swift.Int64?) -> [InstalibSDKFramework.MediaCommenterModel]
+  func getCommenterUserByCommentId(userId: Swift.Int64?, commentId: Swift.Int64?) -> InstalibSDKFramework.MediaCommenterModel?
+  func getUserMetadata(userId: Swift.Int64) -> InstalibSDKFramework.InstaUserMetadataModel?
+  func updateMediaComment(_ model: InstalibSDKFramework.MediaCommenterModel)
+  func updateUser(_ model: InstalibSDKFramework.InstaUserMetadataModel)
+  func insertMediaComment(_ model: InstalibSDKFramework.MediaCommenterModel)
+  func insertMediaLike(_ model: InstalibSDKFramework.MediaLikerModel)
+  func updateMedia(_ model: InstalibSDKFramework.MediaModel)
+}
 public protocol PaginationProtocol {
   associatedtype Identifier : Swift.Hashable, Swift.LosslessStringConvertible
   var autoLoadMoreEnabled: Swift.Bool? { get }
@@ -1623,7 +1738,7 @@ public protocol PaginationProtocol {
   var nextMaxId: Self.Identifier? { get }
   var numResults: Swift.Int? { get }
 }
-extension PaginationProtocol {
+extension InstalibSDKFramework.PaginationProtocol {
   public var autoLoadMoreEnabled: Swift.Bool? {
     get
   }
@@ -1637,7 +1752,7 @@ extension PaginationProtocol {
 public protocol NestedPaginationProtocol : InstalibSDKFramework.PaginationProtocol {
   static var nextMaxIdPath: Swift.KeyPath<Self, Self.Identifier?> { get }
 }
-extension NestedPaginationProtocol {
+extension InstalibSDKFramework.NestedPaginationProtocol {
   public var nextMaxId: Self.Identifier? {
     get
   }
@@ -1648,9 +1763,9 @@ public struct AnyPaginatedResponse {
   public init(from decoder: Swift.Decoder) throws
   public func encode(to encoder: Swift.Encoder) throws
 }
-public typealias PaginationUpdateHandler<R, P> = (P, [R], InstalibSDKFramework.PaginationParameters, [R]) -> Swift.Void
-public typealias LegacyPaginationUpdateHandler<R> = (R, InstalibSDKFramework.PaginationParameters, [R]) -> Swift.Void
-public typealias PaginationCompletionHandler<R> = (Swift.Result<[R], Swift.Error>, InstalibSDKFramework.PaginationParameters) -> Swift.Void
+public typealias PaginationUpdateHandler<R, P> = (_ update: P, _ inserting: [R], _ nextParameters: InstalibSDKFramework.PaginationParameters, _ runningResponse: [R]) -> Swift.Void
+public typealias LegacyPaginationUpdateHandler<R> = (_ update: R, _ nextParameters: InstalibSDKFramework.PaginationParameters, _ runningResponse: [R]) -> Swift.Void
+public typealias PaginationCompletionHandler<R> = (_ response: Swift.Result<[R], Swift.Error>, _ nextParameters: InstalibSDKFramework.PaginationParameters) -> Swift.Void
 public protocol DeviceGenerating {
   func generate() -> InstalibSDKFramework.Device
 }
@@ -1662,10 +1777,10 @@ public struct Device : Swift.Codable {
   public let deviceGuid: Foundation.UUID
   public let googleAdId: Foundation.UUID
   public let rankToken: Foundation.UUID
-  public init(from decoder: Swift.Decoder) throws
   public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
-public typealias CipherOperationOnBlock = (Swift.ArraySlice<Swift.UInt8>) -> Swift.Array<Swift.UInt8>?
+public typealias CipherOperationOnBlock = (_ block: Swift.ArraySlice<Swift.UInt8>) -> Swift.Array<Swift.UInt8>?
 public protocol BlockMode {
   var options: InstalibSDKFramework.BlockModeOption { get }
   @inlinable func worker(blockSize: Swift.Int, cipherOperation: @escaping InstalibSDKFramework.CipherOperationOnBlock, encryptionOperation: @escaping InstalibSDKFramework.CipherOperationOnBlock) throws -> InstalibSDKFramework.CipherModeWorker
@@ -1682,59 +1797,59 @@ public protocol Value : InstalibSDKFramework.Expressible {
   static func fromDatatypeValue(_ datatypeValue: Self.Datatype) -> Self.ValueType
   var datatypeValue: Self.Datatype { get }
 }
-extension Double : InstalibSDKFramework.Number, InstalibSDKFramework.Value {
+extension Swift.Double : InstalibSDKFramework.Number, InstalibSDKFramework.Value {
   public static let declaredDatatype: Swift.String
   public static func fromDatatypeValue(_ datatypeValue: Swift.Double) -> Swift.Double
   public var datatypeValue: Swift.Double {
     get
   }
-  public typealias ValueType = Swift.Double
   public typealias Datatype = Swift.Double
+  public typealias ValueType = Swift.Double
 }
-extension Int64 : InstalibSDKFramework.Number, InstalibSDKFramework.Value {
+extension Swift.Int64 : InstalibSDKFramework.Number, InstalibSDKFramework.Value {
   public static let declaredDatatype: Swift.String
   public static func fromDatatypeValue(_ datatypeValue: Swift.Int64) -> Swift.Int64
   public var datatypeValue: Swift.Int64 {
     get
   }
-  public typealias ValueType = Swift.Int64
   public typealias Datatype = Swift.Int64
+  public typealias ValueType = Swift.Int64
 }
-extension String : InstalibSDKFramework.SQLiteBinding, InstalibSDKFramework.Value {
+extension Swift.String : InstalibSDKFramework.SQLiteBinding, InstalibSDKFramework.Value {
   public static let declaredDatatype: Swift.String
   public static func fromDatatypeValue(_ datatypeValue: Swift.String) -> Swift.String
   public var datatypeValue: Swift.String {
     get
   }
-  public typealias ValueType = Swift.String
   public typealias Datatype = Swift.String
+  public typealias ValueType = Swift.String
 }
-extension Blob : InstalibSDKFramework.SQLiteBinding, InstalibSDKFramework.Value {
+extension InstalibSDKFramework.Blob : InstalibSDKFramework.SQLiteBinding, InstalibSDKFramework.Value {
   public static let declaredDatatype: Swift.String
   public static func fromDatatypeValue(_ datatypeValue: InstalibSDKFramework.Blob) -> InstalibSDKFramework.Blob
   public var datatypeValue: InstalibSDKFramework.Blob {
     get
   }
-  public typealias ValueType = InstalibSDKFramework.Blob
   public typealias Datatype = InstalibSDKFramework.Blob
+  public typealias ValueType = InstalibSDKFramework.Blob
 }
-extension Bool : InstalibSDKFramework.SQLiteBinding, InstalibSDKFramework.Value {
+extension Swift.Bool : InstalibSDKFramework.SQLiteBinding, InstalibSDKFramework.Value {
   public static var declaredDatatype: Swift.String
   public static func fromDatatypeValue(_ datatypeValue: Swift.Int64) -> Swift.Bool
   public var datatypeValue: Swift.Int64 {
     get
   }
-  public typealias ValueType = Swift.Bool
   public typealias Datatype = Swift.Int64
+  public typealias ValueType = Swift.Bool
 }
-extension Int : InstalibSDKFramework.Number, InstalibSDKFramework.Value {
+extension Swift.Int : InstalibSDKFramework.Number, InstalibSDKFramework.Value {
   public static var declaredDatatype: Swift.String
   public static func fromDatatypeValue(_ datatypeValue: Swift.Int64) -> Swift.Int
   public var datatypeValue: Swift.Int64 {
     get
   }
-  public typealias ValueType = Swift.Int
   public typealias Datatype = Swift.Int64
+  public typealias ValueType = Swift.Int
 }
 public struct CCM {
   public enum Error : Swift.Error {
@@ -1742,10 +1857,10 @@ public struct CCM {
     case invalidParameter
     case fail
     public static func == (a: InstalibSDKFramework.CCM.Error, b: InstalibSDKFramework.CCM.Error) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
     public var hashValue: Swift.Int {
       get
     }
-    public func hash(into hasher: inout Swift.Hasher)
   }
   public let options: InstalibSDKFramework.BlockModeOption
   public let customBlockSize: Swift.Int?
@@ -1758,16 +1873,16 @@ public struct CFB : InstalibSDKFramework.BlockMode {
   public enum Error : Swift.Error {
     case invalidInitializationVector
     public static func == (a: InstalibSDKFramework.CFB.Error, b: InstalibSDKFramework.CFB.Error) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
     public var hashValue: Swift.Int {
       get
     }
-    public func hash(into hasher: inout Swift.Hasher)
   }
   public enum SegmentSize : Swift.Int {
     case cfb8
     case cfb128
-    public typealias RawValue = Swift.Int
     public init?(rawValue: Swift.Int)
+    public typealias RawValue = Swift.Int
     public var rawValue: Swift.Int {
       get
     }
@@ -1790,10 +1905,10 @@ public struct BestTimeForPostModel {
 }
 public protocol Updatable {
   mutating func update(withBytes bytes: Swift.ArraySlice<Swift.UInt8>, isLast: Swift.Bool) throws -> Swift.Array<Swift.UInt8>
-  mutating func update(withBytes bytes: Swift.ArraySlice<Swift.UInt8>, isLast: Swift.Bool, output: (Swift.Array<Swift.UInt8>) -> Swift.Void) throws
+  mutating func update(withBytes bytes: Swift.ArraySlice<Swift.UInt8>, isLast: Swift.Bool, output: (_ bytes: Swift.Array<Swift.UInt8>) -> Swift.Void) throws
 }
-extension Updatable {
-  @inlinable public mutating func update(withBytes bytes: Swift.ArraySlice<Swift.UInt8>, isLast: Swift.Bool = false, output: (Swift.Array<Swift.UInt8>) -> Swift.Void) throws {
+extension InstalibSDKFramework.Updatable {
+  @inlinable public mutating func update(withBytes bytes: Swift.ArraySlice<Swift.UInt8>, isLast: Swift.Bool = false, output: (_ bytes: Swift.Array<Swift.UInt8>) -> Swift.Void) throws {
     let processed = try update(withBytes: bytes, isLast: isLast)
     if !processed.isEmpty {
       output(processed)
@@ -1805,7 +1920,7 @@ extension Updatable {
   @inlinable public mutating func update(withBytes bytes: Swift.Array<Swift.UInt8>, isLast: Swift.Bool = false) throws -> Swift.Array<Swift.UInt8> {
     try self.update(withBytes: bytes.slice, isLast: isLast)
   }
-  @inlinable public mutating func update(withBytes bytes: Swift.Array<Swift.UInt8>, isLast: Swift.Bool = false, output: (Swift.Array<Swift.UInt8>) -> Swift.Void) throws {
+  @inlinable public mutating func update(withBytes bytes: Swift.Array<Swift.UInt8>, isLast: Swift.Bool = false, output: (_ bytes: Swift.Array<Swift.UInt8>) -> Swift.Void) throws {
     try self.update(withBytes: bytes.slice, isLast: isLast, output: output)
   }
   @inlinable public mutating func finish(withBytes bytes: Swift.ArraySlice<Swift.UInt8>) throws -> Swift.Array<Swift.UInt8> {
@@ -1817,13 +1932,13 @@ extension Updatable {
   @inlinable public mutating func finish() throws -> Swift.Array<Swift.UInt8> {
     try self.update(withBytes: [], isLast: true)
   }
-  @inlinable public mutating func finish(withBytes bytes: Swift.ArraySlice<Swift.UInt8>, output: (Swift.Array<Swift.UInt8>) -> Swift.Void) throws {
+  @inlinable public mutating func finish(withBytes bytes: Swift.ArraySlice<Swift.UInt8>, output: (_ bytes: Swift.Array<Swift.UInt8>) -> Swift.Void) throws {
     let processed = try update(withBytes: bytes, isLast: true)
     if !processed.isEmpty {
       output(processed)
     }
   }
-  @inlinable public mutating func finish(withBytes bytes: Swift.Array<Swift.UInt8>, output: (Swift.Array<Swift.UInt8>) -> Swift.Void) throws {
+  @inlinable public mutating func finish(withBytes bytes: Swift.Array<Swift.UInt8>, output: (_ bytes: Swift.Array<Swift.UInt8>) -> Swift.Void) throws {
     try self.finish(withBytes: bytes.slice, output: output)
   }
   @inlinable public mutating func finish(output: (Swift.Array<Swift.UInt8>) -> Swift.Void) throws {
@@ -2092,10 +2207,10 @@ public struct CBC : InstalibSDKFramework.BlockMode {
   public enum Error : Swift.Error {
     case invalidInitializationVector
     public static func == (a: InstalibSDKFramework.CBC.Error, b: InstalibSDKFramework.CBC.Error) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
     public var hashValue: Swift.Int {
       get
     }
-    public func hash(into hasher: inout Swift.Hasher)
   }
   public let options: InstalibSDKFramework.BlockModeOption
   public let customBlockSize: Swift.Int?
@@ -2116,10 +2231,10 @@ final public class SHA3 {
       get
     }
     public static func == (a: InstalibSDKFramework.SHA3.Variant, b: InstalibSDKFramework.SHA3.Variant) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
     public var hashValue: Swift.Int {
       get
     }
-    public func hash(into hasher: inout Swift.Hasher)
   }
   public init(variant: InstalibSDKFramework.SHA3.Variant)
   @inlinable final public func calculate(for bytes: Swift.Array<Swift.UInt8>) -> Swift.Array<Swift.UInt8> {
@@ -2133,7 +2248,7 @@ final public class SHA3 {
   final internal func process(block chunk: Swift.ArraySlice<Swift.UInt64>, currentHash hh: inout Swift.Array<Swift.UInt64>)
   @objc deinit
 }
-extension SHA3 : InstalibSDKFramework.Updatable {
+extension InstalibSDKFramework.SHA3 : InstalibSDKFramework.Updatable {
   @inlinable final public func update(withBytes bytes: Swift.ArraySlice<Swift.UInt8>, isLast: Swift.Bool = false) throws -> Swift.Array<Swift.UInt8> {
     self.accumulated += bytes
 
@@ -2186,7 +2301,7 @@ precedencegroup ColumnAssignment {
 infix operator <- : ColumnAssignment
 public struct Setter {
 }
-extension Setter : InstalibSDKFramework.Expressible {
+extension InstalibSDKFramework.Setter : InstalibSDKFramework.Expressible {
   public var expression: InstalibSDKFramework.Expression<Swift.Void> {
     get
   }
@@ -2256,9 +2371,9 @@ postfix public func ++ <V>(column: InstalibSDKFramework.Expression<V?>) -> Insta
 postfix public func -- <V>(column: InstalibSDKFramework.Expression<V>) -> InstalibSDKFramework.Setter where V : InstalibSDKFramework.Value, V.Datatype == Swift.Int64
 postfix public func -- <V>(column: InstalibSDKFramework.Expression<V?>) -> InstalibSDKFramework.Setter where V : InstalibSDKFramework.Value, V.Datatype == Swift.Int64
 public protocol IRepository {
-  func initRepository(completionHandler: @escaping (Swift.Bool) -> Swift.Void)
-  func initRepositoryWithoutAuth(completionHandler: @escaping (Swift.Bool) -> Swift.Void)
-  func initRepositoryLogin(userId: Swift.Int64, completionHandler: @escaping (Swift.Bool, InstalibSDKFramework.User?) -> Swift.Void)
+  func initRepository(completionHandler: @escaping (_ isAuthenticated: Swift.Bool) -> Swift.Void)
+  func initRepositoryWithoutAuth(completionHandler: @escaping (_ isAuthenticated: Swift.Bool) -> Swift.Void)
+  func initRepositoryLogin(userId: Swift.Int64, completionHandler: @escaping (_ isAuthenticated: Swift.Bool, _ user: InstalibSDKFramework.User?) -> Swift.Void)
   static func getInstance() -> InstalibSDKFramework.IRepository
   func getCurrentUser(completionHandler: @escaping (InstalibSDKFramework.User?) -> Swift.Void)
   func friendDetailSync(userId: Swift.Int64) -> InstalibSDKFramework.User?
@@ -2276,6 +2391,8 @@ public protocol IRepository {
   func unfollowUser(userId: Swift.Int64, completionHandler: @escaping (InstalibSDKFramework.Friendship?) -> Swift.Void)
   func followUserSync(userId: Swift.Int64) -> InstalibSDKFramework.Friendship?
   func unfollowUserSync(userId: Swift.Int64) -> InstalibSDKFramework.Friendship?
+  func removeFollower(userId: Swift.Int64, completionHandler: @escaping (Swift.Bool) -> Swift.Void)
+  func removeFollowerSync(userId: Swift.Int64) -> Swift.Bool
   func getUserHighlights(userId: Swift.Int64, completionHandler: @escaping (InstalibSDKFramework.Tray?) -> Swift.Void)
   func getUserPosts(userId: Swift.Int64, nextMaxId: Swift.String?, completionHandler: @escaping ([InstalibSDKFramework.Media]?, Swift.String?, Swift.Bool) -> Swift.Void)
   func getUserIgtvs(userId: Swift.Int64, nextMaxId: Swift.String?, completionHandler: @escaping (InstalibSDKFramework.IgtvResponseModel?, Swift.String?, Swift.Bool) -> Swift.Void)
@@ -2289,10 +2406,10 @@ public protocol IRepository {
   func getUserPendingFriendRequestsToMe(completionHandler: @escaping ([InstalibSDKFramework.User]?) -> Swift.Void)
   func getUserPendingFriendRequestsToFriends(cursor: Swift.String?, completionHandler: @escaping ([InstalibSDKFramework.AnonymousUserInfoModel]?, Swift.String?) -> Swift.Void)
   func getUserPendingFriendRequestsToFriendsOnlyUsername(cursor: Swift.String?, completionHandler: @escaping ([InstalibSDKFramework.FollowRequestItemModel]?, Swift.String?) -> Swift.Void)
-  func getUserFollowersAndFollowingsBatch(userId: Swift.Int64?, progressHandler: ((Swift.Int) -> Swift.Void)?) -> Swift.Bool
-  func getUserFollowersAndFollowingsBatch(userId: Swift.Int64?, progressHandler: ((Swift.Int) -> Swift.Void)?, followersMaxPage: InstalibSDKFramework.PaginationParameters, followingsMaxPage: InstalibSDKFramework.PaginationParameters) -> Swift.Bool
-  func getUserFollowersAndFollowingsOnlyBatch(userId: Swift.Int64?, progressHandler: ((Swift.Int) -> Swift.Void)?) -> Swift.Bool
-  func getUserFollowersAndFollowingsOnlyBatch(userId: Swift.Int64?, progressHandler: ((Swift.Int) -> Swift.Void)?, followersMaxPage: InstalibSDKFramework.PaginationParameters, followingsMaxPage: InstalibSDKFramework.PaginationParameters) -> Swift.Bool
+  func getUserFollowersAndFollowingsBatch(userId: Swift.Int64?, progressHandler: ((_ progress: Swift.Int) -> Swift.Void)?) -> Swift.Bool
+  func getUserFollowersAndFollowingsBatch(userId: Swift.Int64?, progressHandler: ((_ progress: Swift.Int) -> Swift.Void)?, followersMaxPage: InstalibSDKFramework.PaginationParameters, followingsMaxPage: InstalibSDKFramework.PaginationParameters) -> Swift.Bool
+  func getUserFollowersAndFollowingsOnlyBatch(userId: Swift.Int64?, progressHandler: ((_ progress: Swift.Int) -> Swift.Void)?) -> Swift.Bool
+  func getUserFollowersAndFollowingsOnlyBatch(userId: Swift.Int64?, progressHandler: ((_ progress: Swift.Int) -> Swift.Void)?, followersMaxPage: InstalibSDKFramework.PaginationParameters, followingsMaxPage: InstalibSDKFramework.PaginationParameters) -> Swift.Bool
   func getUserBestFriendsDataBatch(userId: Swift.Int64)
   func getUserBlockedsDataBatch(userId: Swift.Int64)
   func getUserMediaDataBatch(userId: Swift.Int64)
@@ -2416,6 +2533,8 @@ public protocol IRepository {
   func getFavUsers(completionHandler: @escaping ([InstalibSDKFramework.EngagedUserBookmarkedWithMetadataModel]?) -> Swift.Void)
   func insertBookmarkedUser(_ model: InstalibSDKFramework.EngagedUserBookmarkedModel) -> Swift.Int64?
   func deleteBookmark(_ model: InstalibSDKFramework.EngagedUserBookmarkedModel)
+  func getEngagedUserSync(userId: Swift.Int64) -> InstalibSDKFramework.EngagedUserModel?
+  func updateEngagedUserSync(model: InstalibSDKFramework.EngagedUserModel)
 }
 public struct MediaCommenterModel {
   public init()
@@ -2427,38 +2546,38 @@ public struct MediaCommenterModel {
   public var isDelete: Swift.Bool?
   public var createdAt: Swift.Int64?
 }
-extension ExpressionType where Self.UnderlyingType : InstalibSDKFramework.Number {
+extension InstalibSDKFramework.ExpressionType where Self.UnderlyingType : InstalibSDKFramework.Number {
   public var absoluteValue: InstalibSDKFramework.Expression<Self.UnderlyingType> {
     get
   }
 }
-extension ExpressionType where Self.UnderlyingType : InstalibSDKFramework._OptionalType, Self.UnderlyingType.WrappedType : InstalibSDKFramework.Number {
+extension InstalibSDKFramework.ExpressionType where Self.UnderlyingType : InstalibSDKFramework._OptionalType, Self.UnderlyingType.WrappedType : InstalibSDKFramework.Number {
   public var absoluteValue: InstalibSDKFramework.Expression<Self.UnderlyingType> {
     get
   }
 }
-extension ExpressionType where Self.UnderlyingType == Swift.Double {
+extension InstalibSDKFramework.ExpressionType where Self.UnderlyingType == Swift.Double {
   public func round(_ precision: Swift.Int? = nil) -> InstalibSDKFramework.Expression<Self.UnderlyingType>
 }
-extension ExpressionType where Self.UnderlyingType == Swift.Double? {
+extension InstalibSDKFramework.ExpressionType where Self.UnderlyingType == Swift.Double? {
   public func round(_ precision: Swift.Int? = nil) -> InstalibSDKFramework.Expression<Self.UnderlyingType>
 }
-extension ExpressionType where Self.UnderlyingType : InstalibSDKFramework.Value, Self.UnderlyingType.Datatype == Swift.Int64 {
+extension InstalibSDKFramework.ExpressionType where Self.UnderlyingType : InstalibSDKFramework.Value, Self.UnderlyingType.Datatype == Swift.Int64 {
   public static func random() -> InstalibSDKFramework.Expression<Self.UnderlyingType>
 }
-extension ExpressionType where Self.UnderlyingType == Foundation.Data {
+extension InstalibSDKFramework.ExpressionType where Self.UnderlyingType == Foundation.Data {
   public static func random(_ length: Swift.Int) -> InstalibSDKFramework.Expression<Self.UnderlyingType>
   public static func allZeros(_ length: Swift.Int) -> InstalibSDKFramework.Expression<Self.UnderlyingType>
   public var length: InstalibSDKFramework.Expression<Swift.Int> {
     get
   }
 }
-extension ExpressionType where Self.UnderlyingType == Foundation.Data? {
+extension InstalibSDKFramework.ExpressionType where Self.UnderlyingType == Foundation.Data? {
   public var length: InstalibSDKFramework.Expression<Swift.Int?> {
     get
   }
 }
-extension ExpressionType where Self.UnderlyingType == Swift.String {
+extension InstalibSDKFramework.ExpressionType where Self.UnderlyingType == Swift.String {
   public var length: InstalibSDKFramework.Expression<Swift.Int> {
     get
   }
@@ -2483,7 +2602,7 @@ extension ExpressionType where Self.UnderlyingType == Swift.String {
     get
   }
 }
-extension ExpressionType where Self.UnderlyingType == Swift.String? {
+extension InstalibSDKFramework.ExpressionType where Self.UnderlyingType == Swift.String? {
   public var length: InstalibSDKFramework.Expression<Swift.Int?> {
     get
   }
@@ -2508,17 +2627,17 @@ extension ExpressionType where Self.UnderlyingType == Swift.String? {
     get
   }
 }
-extension Collection where Self.Element : InstalibSDKFramework.Value {
+extension Swift.Collection where Self.Element : InstalibSDKFramework.Value {
   public func contains(_ expression: InstalibSDKFramework.Expression<Self.Iterator.Element>) -> InstalibSDKFramework.Expression<Swift.Bool>
   public func contains(_ expression: InstalibSDKFramework.Expression<Self.Iterator.Element?>) -> InstalibSDKFramework.Expression<Swift.Bool?>
 }
-extension String {
+extension Swift.String {
   public func like(_ pattern: InstalibSDKFramework.Expression<Swift.String>, escape character: Swift.Character? = nil) -> InstalibSDKFramework.Expression<Swift.Bool>
 }
 public func ?? <V>(optional: InstalibSDKFramework.Expression<V?>, defaultValue: V) -> InstalibSDKFramework.Expression<V> where V : InstalibSDKFramework.Value
 public func ?? <V>(optional: InstalibSDKFramework.Expression<V?>, defaultValue: InstalibSDKFramework.Expression<V>) -> InstalibSDKFramework.Expression<V> where V : InstalibSDKFramework.Value
 public func ?? <V>(optional: InstalibSDKFramework.Expression<V?>, defaultValue: InstalibSDKFramework.Expression<V?>) -> InstalibSDKFramework.Expression<V> where V : InstalibSDKFramework.Value
-extension String {
+extension Swift.String {
   public func decryptBase64ToString(cipher: InstalibSDKFramework.Cipher) throws -> Swift.String
   public func decryptBase64(cipher: InstalibSDKFramework.Cipher) throws -> Swift.Array<Swift.UInt8>
 }
@@ -2535,8 +2654,8 @@ public struct InstaUserMetadataModel {
 }
 @_inheritsConvenienceInitializers final public class CBCMAC : InstalibSDKFramework.CMAC {
   override final public func authenticate(_ bytes: Swift.Array<Swift.UInt8>) throws -> Swift.Array<Swift.UInt8>
-  @objc deinit
   override public init(key: Swift.Array<Swift.UInt8>) throws
+  @objc deinit
 }
 @usableFromInline
 final internal class BlockEncryptor : InstalibSDKFramework.Cryptor, InstalibSDKFramework.Updatable {
@@ -2560,7 +2679,7 @@ public class PaginationParameters {
   public static func maxPagesToLoad(maxPages: Swift.Int) -> InstalibSDKFramework.PaginationParameters
   @objc deinit
 }
-extension Connection {
+extension InstalibSDKFramework.Connection {
   final public func createFunction<Z>(_ function: Swift.String, deterministic: Swift.Bool = false, _ block: @escaping () -> Z) throws -> (() -> InstalibSDKFramework.Expression<Z>) where Z : InstalibSDKFramework.Value
   final public func createFunction<Z>(_ function: Swift.String, deterministic: Swift.Bool = false, _ block: @escaping () -> Z?) throws -> (() -> InstalibSDKFramework.Expression<Z?>) where Z : InstalibSDKFramework.Value
   final public func createFunction<Z, A>(_ function: Swift.String, deterministic: Swift.Bool = false, _ block: @escaping (A) -> Z) throws -> ((InstalibSDKFramework.Expression<A>) -> InstalibSDKFramework.Expression<Z>) where Z : InstalibSDKFramework.Value, A : InstalibSDKFramework.Value
@@ -2577,15 +2696,15 @@ extension Connection {
   final public func createFunction<Z, A, B>(_ function: Swift.String, deterministic: Swift.Bool = false, _ block: @escaping (A?, B?) -> Z?) throws -> (InstalibSDKFramework.Expression<A?>, InstalibSDKFramework.Expression<B?>) -> InstalibSDKFramework.Expression<Z?> where Z : InstalibSDKFramework.Value, A : InstalibSDKFramework.Value, B : InstalibSDKFramework.Value
 }
 @objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @available(iOS 12, *)
-public class LoginWebView : WebKit.WKWebView, WebKit.WKNavigationDelegate {
-  public var didReachEndOfLoginFlow: (() -> Swift.Void)?
+@_Concurrency.MainActor(unsafe) public class LoginWebView : WebKit.WKWebView, WebKit.WKNavigationDelegate {
+  @_Concurrency.MainActor(unsafe) public var didReachEndOfLoginFlow: (() -> Swift.Void)?
   @available(*, unavailable, message: "using a custom `userAgent` is no longer supported")
-  public init(frame: CoreGraphics.CGRect, userAgent: Swift.String?, didReachEndOfLoginFlow: (() -> Swift.Void)? = nil)
-  public init(frame: CoreGraphics.CGRect, didReachEndOfLoginFlow: (() -> Swift.Void)? = nil)
+  @_Concurrency.MainActor(unsafe) public init(frame: CoreGraphics.CGRect, userAgent: Swift.String?, didReachEndOfLoginFlow: (() -> Swift.Void)? = nil)
+  @_Concurrency.MainActor(unsafe) public init(frame: CoreGraphics.CGRect, didReachEndOfLoginFlow: (() -> Swift.Void)? = nil)
   @available(*, unavailable, message: "use `init(frame:didReachEndOfLoginFlow:)` instead.")
-  public init(frame: CoreGraphics.CGRect, improvingReadability shouldImproveReadability: Swift.Bool, didReachEndOfLoginFlow: (() -> Swift.Void)? = nil)
+  @_Concurrency.MainActor(unsafe) public init(frame: CoreGraphics.CGRect, improvingReadability shouldImproveReadability: Swift.Bool, didReachEndOfLoginFlow: (() -> Swift.Void)? = nil)
   @available(*, unavailable)
-  @objc required dynamic public init?(coder: Foundation.NSCoder)
+  @_Concurrency.MainActor(unsafe) @objc required dynamic public init?(coder: Foundation.NSCoder)
   @objc deinit
 }
 public protocol QueryType : InstalibSDKFramework.Expressible {
@@ -2595,7 +2714,7 @@ public protocol QueryType : InstalibSDKFramework.Expressible {
 public protocol SchemaType : InstalibSDKFramework.QueryType {
   static var identifier: Swift.String { get }
 }
-extension SchemaType {
+extension InstalibSDKFramework.SchemaType {
   public func select(_ column1: InstalibSDKFramework.Expressible, _ more: InstalibSDKFramework.Expressible...) -> Self
   public func select(distinct column1: InstalibSDKFramework.Expressible, _ more: InstalibSDKFramework.Expressible...) -> Self
   public func select(_ all: [InstalibSDKFramework.Expressible]) -> Self
@@ -2610,7 +2729,7 @@ extension SchemaType {
     get
   }
 }
-extension QueryType {
+extension InstalibSDKFramework.QueryType {
   public func union(_ table: InstalibSDKFramework.QueryType) -> Self
   public func join(_ table: InstalibSDKFramework.QueryType, on condition: InstalibSDKFramework.Expression<Swift.Bool>) -> Self
   public func join(_ table: InstalibSDKFramework.QueryType, on condition: InstalibSDKFramework.Expression<Swift.Bool?>) -> Self
@@ -2705,7 +2824,7 @@ public struct RowIterator : InstalibSDKFramework.FailableIterator {
   public func failableNext() throws -> InstalibSDKFramework.Row?
   public func map<T>(_ transform: (InstalibSDKFramework.RowIterator.Element) throws -> T) throws -> [T]
 }
-extension Connection {
+extension InstalibSDKFramework.Connection {
   final public func prepare(_ query: InstalibSDKFramework.QueryType) throws -> Swift.AnySequence<InstalibSDKFramework.Row>
   final public func prepareRowIterator(_ query: InstalibSDKFramework.QueryType) throws -> InstalibSDKFramework.RowIterator
   final public func scalar<V>(_ query: InstalibSDKFramework.ScalarQuery<V>) throws -> V where V : InstalibSDKFramework.Value
@@ -2734,8 +2853,8 @@ public enum JoinType : Swift.String {
   case cross
   case inner
   case leftOuter
-  public typealias RawValue = Swift.String
   public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
     get
   }
@@ -2746,8 +2865,8 @@ public enum OnConflict : Swift.String {
   case abort
   case fail
   case ignore
-  public typealias RawValue = Swift.String
   public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
     get
   }
@@ -2758,10 +2877,10 @@ public enum CipherError : Swift.Error {
   case encrypt
   case decrypt
   public static func == (a: InstalibSDKFramework.CipherError, b: InstalibSDKFramework.CipherError) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
   public var hashValue: Swift.Int {
     get
   }
-  public func hash(into hasher: inout Swift.Hasher)
 }
 public protocol Cipher : AnyObject {
   var keySize: Swift.Int { get }
@@ -2770,7 +2889,7 @@ public protocol Cipher : AnyObject {
   func decrypt(_ bytes: Swift.ArraySlice<Swift.UInt8>) throws -> Swift.Array<Swift.UInt8>
   func decrypt(_ bytes: Swift.Array<Swift.UInt8>) throws -> Swift.Array<Swift.UInt8>
 }
-extension Cipher {
+extension InstalibSDKFramework.Cipher {
   public func encrypt(_ bytes: Swift.Array<Swift.UInt8>) throws -> Swift.Array<Swift.UInt8>
   public func decrypt(_ bytes: Swift.Array<Swift.UInt8>) throws -> Swift.Array<Swift.UInt8>
 }
@@ -2885,8 +3004,8 @@ public struct BlockModeOption : Swift.OptionSet {
   internal static let paddingRequired: InstalibSDKFramework.BlockModeOption
   @usableFromInline
   internal static let useEncryptToDecrypt: InstalibSDKFramework.BlockModeOption
-  public typealias Element = InstalibSDKFramework.BlockModeOption
   public typealias ArrayLiteralElement = InstalibSDKFramework.BlockModeOption
+  public typealias Element = InstalibSDKFramework.BlockModeOption
   public typealias RawValue = Swift.Int
 }
 public struct RecentActivity : InstalibSDKFramework.ParsedResponse {
@@ -2900,8 +3019,8 @@ public struct RecentActivity : InstalibSDKFramework.ParsedResponse {
     public let photosOfYou: Swift.Int
     public let requests: Swift.Int
     public init(rawResponse: InstalibSDKFramework.DynamicResponse)
-    public init(from decoder: Swift.Decoder) throws
     public func encode(to encoder: Swift.Encoder) throws
+    public init(from decoder: Swift.Decoder) throws
   }
   public struct Story : InstalibSDKFramework.IdentifiableParsedResponse {
     public init?(rawResponse: InstalibSDKFramework.DynamicResponse)
@@ -2952,34 +3071,34 @@ public struct Status : Swift.Codable {
   public enum State {
     case ok, fail, unknown
     public static func == (a: InstalibSDKFramework.Status.State, b: InstalibSDKFramework.Status.State) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
     public var hashValue: Swift.Int {
       get
     }
-    public func hash(into hasher: inout Swift.Hasher)
   }
   public var status: Swift.String?
   public var state: InstalibSDKFramework.Status.State {
     get
   }
-  public init(from decoder: Swift.Decoder) throws
   public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public class Credentials {
   public enum Verification : Swift.String {
     case email, text
+    public init?(rawValue: Swift.String)
     public typealias RawValue = Swift.String
     public var rawValue: Swift.String {
       get
     }
-    public init?(rawValue: Swift.String)
   }
   public enum VerificationCodeType : Swift.String {
     case challenge, sms, backup, totp
+    public init?(rawValue: Swift.String)
     public typealias RawValue = Swift.String
     public var rawValue: Swift.String {
       get
     }
-    public init?(rawValue: Swift.String)
   }
   public var username: Swift.String {
     get
@@ -2996,7 +3115,7 @@ public class Credentials {
 @usableFromInline
 internal struct BatchedCollectionIndex<Base> where Base : Swift.Collection {
 }
-extension BatchedCollectionIndex : Swift.Comparable {
+extension InstalibSDKFramework.BatchedCollectionIndex : Swift.Comparable {
   @usableFromInline
   internal static func == <Base>(lhs: InstalibSDKFramework.BatchedCollectionIndex<Base>, rhs: InstalibSDKFramework.BatchedCollectionIndex<Base>) -> Swift.Bool where Base : Swift.Collection
   @usableFromInline
@@ -3025,18 +3144,18 @@ internal struct BatchedCollection<Base> : Swift.Collection where Base : Swift.Co
   @usableFromInline
   internal typealias Element = Base.SubSequence
   @usableFromInline
+  internal typealias Indices = Swift.DefaultIndices<InstalibSDKFramework.BatchedCollection<Base>>
+  @usableFromInline
   internal typealias Iterator = Swift.IndexingIterator<InstalibSDKFramework.BatchedCollection<Base>>
   @usableFromInline
   internal typealias SubSequence = Swift.Slice<InstalibSDKFramework.BatchedCollection<Base>>
-  @usableFromInline
-  internal typealias Indices = Swift.DefaultIndices<InstalibSDKFramework.BatchedCollection<Base>>
 }
-extension Collection {
+extension Swift.Collection {
   @inlinable internal func batched(by size: Swift.Int) -> InstalibSDKFramework.BatchedCollection<Self> {
     BatchedCollection(base: self, size: size)
   }
 }
-extension AES {
+extension InstalibSDKFramework.AES {
   convenience public init(key: Swift.String, iv: Swift.String, padding: InstalibSDKFramework.Padding = .pkcs7) throws
 }
 final public class SHA2 {
@@ -3092,7 +3211,7 @@ final public class SHA2 {
   final internal func process32(block chunk: Swift.ArraySlice<Swift.UInt8>, currentHash hh: inout Swift.Array<Swift.UInt32>)
   @objc deinit
 }
-extension SHA2 : InstalibSDKFramework.Updatable {
+extension InstalibSDKFramework.SHA2 : InstalibSDKFramework.Updatable {
   @inlinable final public func update(withBytes bytes: Swift.ArraySlice<Swift.UInt8>, isLast: Swift.Bool = false) throws -> Swift.Array<Swift.UInt8> {
     self.accumulated += bytes
 
@@ -3263,10 +3382,10 @@ public enum KeychainSwiftAccessOptions {
   case accessibleAfterFirstUnlockThisDeviceOnly
   case accessibleWhenPasscodeSetThisDeviceOnly
   public static func == (a: InstalibSDKFramework.KeychainSwiftAccessOptions, b: InstalibSDKFramework.KeychainSwiftAccessOptions) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
   public var hashValue: Swift.Int {
     get
   }
-  public func hash(into hasher: inout Swift.Hasher)
 }
 public struct StoryDbModel {
   public init()
@@ -3282,7 +3401,7 @@ public struct StoryDbModel {
   public var isArchived: Swift.Bool
   public var isRefreshViewsAfterArchive: Swift.Bool
 }
-extension Module {
+extension InstalibSDKFramework.Module {
   public static func RTree<T, U>(_ primaryKey: InstalibSDKFramework.Expression<T>, _ pairs: (InstalibSDKFramework.Expression<U>, InstalibSDKFramework.Expression<U>)...) -> InstalibSDKFramework.Module where T : InstalibSDKFramework.Value, U : InstalibSDKFramework.Value, T.Datatype == Swift.Int64, U.Datatype == Swift.Double
 }
 final public class GCM : InstalibSDKFramework.BlockMode {
@@ -3290,20 +3409,20 @@ final public class GCM : InstalibSDKFramework.BlockMode {
     case combined
     case detached
     public static func == (a: InstalibSDKFramework.GCM.Mode, b: InstalibSDKFramework.GCM.Mode) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
     public var hashValue: Swift.Int {
       get
     }
-    public func hash(into hasher: inout Swift.Hasher)
   }
   final public let options: InstalibSDKFramework.BlockModeOption
   public enum Error : Swift.Error {
     case invalidInitializationVector
     case fail
     public static func == (a: InstalibSDKFramework.GCM.Error, b: InstalibSDKFramework.GCM.Error) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
     public var hashValue: Swift.Int {
       get
     }
-    public func hash(into hasher: inout Swift.Hasher)
   }
   final public let customBlockSize: Swift.Int?
   final public var authenticationTag: Swift.Array<Swift.UInt8>?
@@ -3362,10 +3481,10 @@ final public class MD5 {
   final public func calculate(for bytes: Swift.Array<Swift.UInt8>) -> Swift.Array<Swift.UInt8>
   @objc deinit
 }
-extension MD5 : InstalibSDKFramework.Updatable {
+extension InstalibSDKFramework.MD5 : InstalibSDKFramework.Updatable {
   final public func update(withBytes bytes: Swift.ArraySlice<Swift.UInt8>, isLast: Swift.Bool = false) throws -> Swift.Array<Swift.UInt8>
 }
-extension ChaCha20 {
+extension InstalibSDKFramework.ChaCha20 {
   convenience public init(key: Swift.String, iv: Swift.String) throws
 }
 public enum EndpointPath {
@@ -3374,7 +3493,7 @@ public enum EndpointPath {
   case version2(Swift.String)
   case generic(Swift.String)
 }
-extension EndpointPath : InstalibSDKFramework.LosselessEndpointRepresentable {
+extension InstalibSDKFramework.EndpointPath : InstalibSDKFramework.LosselessEndpointRepresentable {
   public var placeholders: [Swift.String]? {
     get
   }
@@ -3394,32 +3513,32 @@ extension EndpointPath : InstalibSDKFramework.LosselessEndpointRepresentable {
     get
   }
 }
-extension EndpointPath : Swift.RawRepresentable, Swift.ExpressibleByStringLiteral, Swift.Equatable {
+extension InstalibSDKFramework.EndpointPath : Swift.RawRepresentable, Swift.ExpressibleByStringLiteral, Swift.Equatable {
   public init(stringLiteral value: Swift.String)
   public init?(rawValue: Swift.String)
   public var rawValue: Swift.String {
     get
   }
-  public typealias StringLiteralType = Swift.String
-  public typealias RawValue = Swift.String
   public typealias ExtendedGraphemeClusterLiteralType = Swift.String
+  public typealias RawValue = Swift.String
+  public typealias StringLiteralType = Swift.String
   public typealias UnicodeScalarLiteralType = Swift.String
 }
 public class CMAC : InstalibSDKFramework.Authenticator {
   public enum Error : Swift.Error {
     case wrongKeyLength
     public static func == (a: InstalibSDKFramework.CMAC.Error, b: InstalibSDKFramework.CMAC.Error) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
     public var hashValue: Swift.Int {
       get
     }
-    public func hash(into hasher: inout Swift.Hasher)
   }
   public init(key: Swift.Array<Swift.UInt8>) throws
   public func authenticate(_ bytes: Swift.Array<Swift.UInt8>) throws -> Swift.Array<Swift.UInt8>
   public func authenticate(_ bytes: Swift.Array<Swift.UInt8>, cipher: InstalibSDKFramework.Cipher) throws -> Swift.Array<Swift.UInt8>
   @objc deinit
 }
-extension Collection where Self.Element == Swift.UInt8, Self.Index == Swift.Int {
+extension Swift.Collection where Self.Element == Swift.UInt8, Self.Index == Swift.Int {
   @inlinable internal func toUInt32Array() -> Swift.Array<Swift.UInt32> {
     guard !isEmpty else {
       return []
@@ -3463,7 +3582,7 @@ public protocol ExpressionType : InstalibSDKFramework.Expressible {
   var bindings: [InstalibSDKFramework.SQLiteBinding?] { get }
   init(_ template: Swift.String, _ bindings: [InstalibSDKFramework.SQLiteBinding?])
 }
-extension ExpressionType {
+extension InstalibSDKFramework.ExpressionType {
   public init(literal: Swift.String)
   public init(_ identifier: Swift.String)
   public init<U>(_ expression: U) where U : InstalibSDKFramework.ExpressionType
@@ -3477,10 +3596,10 @@ public struct Expression<Datatype> : InstalibSDKFramework.ExpressionType {
 public protocol Expressible {
   var expression: InstalibSDKFramework.Expression<Swift.Void> { get }
 }
-extension Expressible {
+extension InstalibSDKFramework.Expressible {
   public func asSQL() -> Swift.String
 }
-extension ExpressionType {
+extension InstalibSDKFramework.ExpressionType {
   public var expression: InstalibSDKFramework.Expression<Swift.Void> {
     get
   }
@@ -3491,16 +3610,16 @@ extension ExpressionType {
     get
   }
 }
-extension ExpressionType where Self.UnderlyingType : InstalibSDKFramework.Value {
+extension InstalibSDKFramework.ExpressionType where Self.UnderlyingType : InstalibSDKFramework.Value {
   public init(value: Self.UnderlyingType)
 }
-extension ExpressionType where Self.UnderlyingType : InstalibSDKFramework._OptionalType, Self.UnderlyingType.WrappedType : InstalibSDKFramework.Value {
+extension InstalibSDKFramework.ExpressionType where Self.UnderlyingType : InstalibSDKFramework._OptionalType, Self.UnderlyingType.WrappedType : InstalibSDKFramework.Value {
   public static var null: Self {
     get
   }
   public init(value: Self.UnderlyingType.WrappedType?)
 }
-extension Value {
+extension InstalibSDKFramework.Value {
   public var expression: InstalibSDKFramework.Expression<Swift.Void> {
     get
   }
@@ -3569,8 +3688,8 @@ public enum Gender : Swift.String {
   case male
   case female
   case unknown
-  public typealias RawValue = Swift.String
   public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
     get
   }
@@ -3591,15 +3710,15 @@ final public class AES {
     case dataPaddingRequired
     case invalidData
     public static func == (a: InstalibSDKFramework.AES.Error, b: InstalibSDKFramework.AES.Error) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
     public var hashValue: Swift.Int {
       get
     }
-    public func hash(into hasher: inout Swift.Hasher)
   }
   public enum Variant : Swift.Int {
     case aes128, aes192, aes256
-    public typealias RawValue = Swift.Int
     public init?(rawValue: Swift.Int)
+    public typealias RawValue = Swift.Int
     public var rawValue: Swift.Int {
       get
     }
@@ -3749,11 +3868,11 @@ final public class AES {
   final internal func decrypt(block: Swift.ArraySlice<Swift.UInt8>) -> Swift.Array<Swift.UInt8>?
   @objc deinit
 }
-extension AES {
+extension InstalibSDKFramework.AES {
   @usableFromInline
   @inline(__always) final internal func F1(_ x0: Swift.UInt32, _ x1: Swift.UInt32, _ x2: Swift.UInt32, _ x3: Swift.UInt32) -> Swift.UInt32
 }
-extension AES : InstalibSDKFramework.Cipher {
+extension InstalibSDKFramework.AES : InstalibSDKFramework.Cipher {
   @inlinable final public func encrypt(_ bytes: Swift.ArraySlice<Swift.UInt8>) throws -> Swift.Array<Swift.UInt8> {
     let blockSize = self.blockMode.customBlockSize ?? AES.blockSize
     let chunks = bytes.batched(by: blockSize)
@@ -3803,21 +3922,21 @@ final public class Blowfish {
     case invalidInitializationVector
     case invalidBlockMode
     public static func == (a: InstalibSDKFramework.Blowfish.Error, b: InstalibSDKFramework.Blowfish.Error) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
     public var hashValue: Swift.Int {
       get
     }
-    public func hash(into hasher: inout Swift.Hasher)
   }
   public static let blockSize: Swift.Int
   final public let keySize: Swift.Int
   public init(key: Swift.Array<Swift.UInt8>, blockMode: InstalibSDKFramework.BlockMode = CBC(iv: Array<UInt8>(repeating: 0, count: Blowfish.blockSize)), padding: InstalibSDKFramework.Padding) throws
   @objc deinit
 }
-extension Blowfish : InstalibSDKFramework.Cipher {
+extension InstalibSDKFramework.Blowfish : InstalibSDKFramework.Cipher {
   final public func encrypt<C>(_ bytes: C) throws -> Swift.Array<Swift.UInt8> where C : Swift.Collection, C.Element == Swift.UInt8, C.Index == Swift.Int
   final public func decrypt<C>(_ bytes: C) throws -> Swift.Array<Swift.UInt8> where C : Swift.Collection, C.Element == Swift.UInt8, C.Index == Swift.Int
 }
-extension Data {
+extension Foundation.Data {
   public func checksum() -> Swift.UInt16
   public func md5() -> Foundation.Data
   public func sha1() -> Foundation.Data
@@ -3833,14 +3952,14 @@ extension Data {
   public func decrypt(cipher: InstalibSDKFramework.Cipher) throws -> Foundation.Data
   public func authenticate(with authenticator: InstalibSDKFramework.Authenticator) throws -> Foundation.Data
 }
-extension Data {
+extension Foundation.Data {
   public init(hex: Swift.String)
   public var bytes: Swift.Array<Swift.UInt8> {
     get
   }
   public func toHexString() -> Swift.String
 }
-extension AES : InstalibSDKFramework.Cryptors {
+extension InstalibSDKFramework.AES : InstalibSDKFramework.Cryptors {
   @inlinable final public func makeEncryptor() throws -> InstalibSDKFramework.Cryptor & InstalibSDKFramework.Updatable {
     let blockSize = blockMode.customBlockSize ?? AES.blockSize
     let worker = try blockMode.worker(blockSize: blockSize, cipherOperation: encrypt, encryptionOperation: encrypt)
@@ -3867,7 +3986,7 @@ public class PrivateKey : InstalibSDKFramework.SwiftyKey {
   required public init(data: Foundation.Data) throws
   @objc deinit
 }
-extension FixedWidthInteger {
+extension Swift.FixedWidthInteger {
   @inlinable internal func bytes(totalBytes: Swift.Int = MemoryLayout<Self>.size) -> Swift.Array<Swift.UInt8> {
     arrayOfBytes(value: self.littleEndian, length: totalBytes)
     // TODO: adjust bytes order
@@ -3875,7 +3994,7 @@ extension FixedWidthInteger {
     // return withUnsafeBytes(of: &value, Array.init).reversed()
   }
 }
-extension String {
+extension Swift.String {
   public var camelCased: Swift.String {
     get
   }
@@ -3965,24 +4084,24 @@ extension String {
   final public func scalar(_ bindings: [Swift.String : InstalibSDKFramework.SQLiteBinding?]) throws -> InstalibSDKFramework.SQLiteBinding?
   final public func step() throws -> Swift.Bool
 }
-extension Statement : Swift.Sequence {
+extension InstalibSDKFramework.Statement : Swift.Sequence {
   final public func makeIterator() -> InstalibSDKFramework.Statement
   public typealias Iterator = InstalibSDKFramework.Statement
 }
 public protocol FailableIterator : Swift.IteratorProtocol {
   func failableNext() throws -> Self.Element?
 }
-extension FailableIterator {
+extension InstalibSDKFramework.FailableIterator {
   public func next() -> Self.Element?
 }
-extension Array {
+extension Swift.Array {
   public init<I>(_ failableIterator: I) throws where Element == I.Element, I : InstalibSDKFramework.FailableIterator
 }
-extension Statement : InstalibSDKFramework.FailableIterator {
+extension InstalibSDKFramework.Statement : InstalibSDKFramework.FailableIterator {
   public typealias Element = [InstalibSDKFramework.SQLiteBinding?]
   final public func failableNext() throws -> [InstalibSDKFramework.SQLiteBinding?]?
 }
-extension Statement : Swift.CustomStringConvertible {
+extension InstalibSDKFramework.Statement : Swift.CustomStringConvertible {
   final public var description: Swift.String {
     get
   }
@@ -4007,7 +4126,7 @@ public struct Cursor {
     get
   }
 }
-extension Cursor : Swift.Sequence {
+extension InstalibSDKFramework.Cursor : Swift.Sequence {
   public subscript(idx: Swift.Int) -> InstalibSDKFramework.SQLiteBinding? {
     get
   }
@@ -4064,20 +4183,20 @@ public struct Media : InstalibSDKFramework.IdentifiableParsedResponse {
     public var resolution: CoreGraphics.CGFloat {
       get
     }
-    public init(from decoder: Swift.Decoder) throws
     public func encode(to encoder: Swift.Encoder) throws
+    public init(from decoder: Swift.Decoder) throws
   }
   public struct Picture : Swift.Codable {
     public let versions: [InstalibSDKFramework.Media.Version]
-    public init(from decoder: Swift.Decoder) throws
     public func encode(to encoder: Swift.Encoder) throws
+    public init(from decoder: Swift.Decoder) throws
   }
   public struct Video : Swift.Codable {
     public let duration: Foundation.TimeInterval
     public let versions: [InstalibSDKFramework.Media.Version]
     public let thumbnails: [InstalibSDKFramework.Media.Version]
-    public init(from decoder: Swift.Decoder) throws
     public func encode(to encoder: Swift.Encoder) throws
+    public init(from decoder: Swift.Decoder) throws
   }
   public enum Content : Swift.Codable {
     case picture(InstalibSDKFramework.Media.Picture)
@@ -4092,8 +4211,8 @@ public struct Media : InstalibSDKFramework.IdentifiableParsedResponse {
     public let title: Swift.String
     public let numEpisodes: Swift.Int
     public init(rawResponse: InstalibSDKFramework.DynamicResponse)
-    public init(from decoder: Swift.Decoder) throws
     public func encode(to encoder: Swift.Encoder) throws
+    public init(from decoder: Swift.Decoder) throws
   }
   public init?(rawResponse: InstalibSDKFramework.DynamicResponse)
   public let rawResponse: InstalibSDKFramework.DynamicResponse
@@ -4163,7 +4282,7 @@ public struct Media : InstalibSDKFramework.IdentifiableParsedResponse {
   public init(from decoder: Swift.Decoder) throws
   public func encode(to encoder: Swift.Encoder) throws
 }
-extension Media.Content {
+extension InstalibSDKFramework.Media.Content {
   public var thumbnails: [[InstalibSDKFramework.Media.Version]] {
     get
   }
@@ -4171,7 +4290,7 @@ extension Media.Content {
     get
   }
 }
-extension Collection where Self.Element : Swift.Collection, Self.Element.Element == InstalibSDKFramework.Media.Version {
+extension Swift.Collection where Self.Element : Swift.Collection, Self.Element.Element == InstalibSDKFramework.Media.Version {
   public func with(aspectRatio: CoreGraphics.CGFloat) -> [[InstalibSDKFramework.Media.Version]]
   public var squared: [[InstalibSDKFramework.Media.Version]] {
     get
@@ -4183,12 +4302,12 @@ extension Collection where Self.Element : Swift.Collection, Self.Element.Element
     get
   }
 }
-extension Collection where Self.Element == InstalibSDKFramework.Media.Version? {
+extension Swift.Collection where Self.Element == InstalibSDKFramework.Media.Version? {
   public var valid: [InstalibSDKFramework.Media.Version] {
     get
   }
 }
-extension Collection where Self.Element == InstalibSDKFramework.Media.Version {
+extension Swift.Collection where Self.Element == InstalibSDKFramework.Media.Version {
   public func with(aspectRatio: CoreGraphics.CGFloat) -> [InstalibSDKFramework.Media.Version]
   public var squared: [InstalibSDKFramework.Media.Version] {
     get
@@ -4215,10 +4334,10 @@ public struct IgtvResponseModel : InstalibSDKFramework.ParsedResponse {
   public init(from decoder: Swift.Decoder) throws
   public func encode(to encoder: Swift.Encoder) throws
 }
-extension SchemaType {
+extension InstalibSDKFramework.SchemaType {
   public func drop(ifExists: Swift.Bool = false) -> Swift.String
 }
-extension Table {
+extension InstalibSDKFramework.Table {
   public func create(temporary: Swift.Bool = false, ifNotExists: Swift.Bool = false, withoutRowid: Swift.Bool = false, block: (InstalibSDKFramework.TableBuilder) -> Swift.Void) -> Swift.String
   public func create(_ query: InstalibSDKFramework.QueryType, temporary: Swift.Bool = false, ifNotExists: Swift.Bool = false) -> Swift.String
   public func addColumn<V>(_ name: InstalibSDKFramework.Expression<V>, check: InstalibSDKFramework.Expression<Swift.Bool>? = nil, defaultValue: V) -> Swift.String where V : InstalibSDKFramework.Value
@@ -4237,11 +4356,11 @@ extension Table {
   public func createIndex(_ columns: InstalibSDKFramework.Expressible..., unique: Swift.Bool = false, ifNotExists: Swift.Bool = false) -> Swift.String
   public func dropIndex(_ columns: InstalibSDKFramework.Expressible..., ifExists: Swift.Bool = false) -> Swift.String
 }
-extension SQLiteView {
+extension InstalibSDKFramework.SQLiteView {
   public func create(_ query: InstalibSDKFramework.QueryType, temporary: Swift.Bool = false, ifNotExists: Swift.Bool = false) -> Swift.String
   public func drop(ifExists: Swift.Bool = false) -> Swift.String
 }
-extension VirtualTable {
+extension InstalibSDKFramework.VirtualTable {
   public func create(_ using: InstalibSDKFramework.Module, ifNotExists: Swift.Bool = false) -> Swift.String
   public func rename(_ to: InstalibSDKFramework.VirtualTable) -> Swift.String
 }
@@ -4288,8 +4407,8 @@ extension VirtualTable {
     case setNull
     case setDefault
     case cascade
-    public typealias RawValue = Swift.String
     public init?(rawValue: Swift.String)
+    public typealias RawValue = Swift.String
     public var rawValue: Swift.String {
       get
     }
@@ -4304,20 +4423,20 @@ public enum PrimaryKey {
   case `default`
   case autoincrement
   public static func == (a: InstalibSDKFramework.PrimaryKey, b: InstalibSDKFramework.PrimaryKey) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
   public var hashValue: Swift.Int {
     get
   }
-  public func hash(into hasher: inout Swift.Hasher)
 }
 public struct Module {
   public init(_ name: Swift.String, _ arguments: [InstalibSDKFramework.Expressible])
 }
-extension Module : InstalibSDKFramework.Expressible {
+extension InstalibSDKFramework.Module : InstalibSDKFramework.Expressible {
   public var expression: InstalibSDKFramework.Expression<Swift.Void> {
     get
   }
 }
-extension Array {
+extension Swift.Array {
   @inlinable internal init(reserveCapacity: Swift.Int) {
     self = Array<Element>()
     self.reserveCapacity(reserveCapacity)
@@ -4328,11 +4447,11 @@ extension Array {
   }
   }
 }
-extension Array where Element == Swift.UInt8 {
+extension Swift.Array where Element == Swift.UInt8 {
   public init(hex: Swift.String)
   public func toHexString() -> Swift.String
 }
-extension Array where Element == Swift.UInt8 {
+extension Swift.Array where Element == Swift.UInt8 {
   @available(*, deprecated)
   public func chunks(size chunksize: Swift.Int) -> Swift.Array<Swift.Array<Element>>
   public func md5() -> [Element]
@@ -4367,10 +4486,10 @@ public struct PCBC : InstalibSDKFramework.BlockMode {
   public enum Error : Swift.Error {
     case invalidInitializationVector
     public static func == (a: InstalibSDKFramework.PCBC.Error, b: InstalibSDKFramework.PCBC.Error) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
     public var hashValue: Swift.Int {
       get
     }
-    public func hash(into hasher: inout Swift.Hasher)
   }
   public let options: InstalibSDKFramework.BlockModeOption
   public let customBlockSize: Swift.Int?
@@ -4382,33 +4501,33 @@ final public class ChaCha20 {
     case invalidKeyOrInitializationVector
     case notSupported
     public static func == (a: InstalibSDKFramework.ChaCha20.Error, b: InstalibSDKFramework.ChaCha20.Error) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
     public var hashValue: Swift.Int {
       get
     }
-    public func hash(into hasher: inout Swift.Hasher)
   }
   public static let blockSize: Swift.Int
   final public let keySize: Swift.Int
   public init(key: Swift.Array<Swift.UInt8>, iv nonce: Swift.Array<Swift.UInt8>) throws
   @objc deinit
 }
-extension ChaCha20 : InstalibSDKFramework.Cipher {
+extension InstalibSDKFramework.ChaCha20 : InstalibSDKFramework.Cipher {
   final public func encrypt(_ bytes: Swift.ArraySlice<Swift.UInt8>) throws -> Swift.Array<Swift.UInt8>
   final public func decrypt(_ bytes: Swift.ArraySlice<Swift.UInt8>) throws -> Swift.Array<Swift.UInt8>
 }
-extension ChaCha20 {
+extension InstalibSDKFramework.ChaCha20 {
   public struct ChaChaEncryptor : InstalibSDKFramework.Cryptor, InstalibSDKFramework.Updatable {
     public mutating func update(withBytes bytes: Swift.ArraySlice<Swift.UInt8>, isLast: Swift.Bool = false) throws -> Swift.Array<Swift.UInt8>
     public func seek(to: Swift.Int) throws
   }
 }
-extension ChaCha20 {
+extension InstalibSDKFramework.ChaCha20 {
   public struct ChaChaDecryptor : InstalibSDKFramework.Cryptor, InstalibSDKFramework.Updatable {
     public mutating func update(withBytes bytes: Swift.ArraySlice<Swift.UInt8>, isLast: Swift.Bool = true) throws -> Swift.Array<Swift.UInt8>
     public func seek(to: Swift.Int) throws
   }
 }
-extension ChaCha20 : InstalibSDKFramework.Cryptors {
+extension InstalibSDKFramework.ChaCha20 : InstalibSDKFramework.Cryptors {
   final public func makeEncryptor() -> InstalibSDKFramework.Cryptor & InstalibSDKFramework.Updatable
   final public func makeDecryptor() -> InstalibSDKFramework.Cryptor & InstalibSDKFramework.Updatable
 }
@@ -4439,15 +4558,15 @@ public struct HKDF {
     case invalidInput
     case derivedKeyTooLong
     public static func == (a: InstalibSDKFramework.HKDF.Error, b: InstalibSDKFramework.HKDF.Error) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
     public var hashValue: Swift.Int {
       get
     }
-    public func hash(into hasher: inout Swift.Hasher)
   }
   public init(password: Swift.Array<Swift.UInt8>, salt: Swift.Array<Swift.UInt8>? = nil, info: Swift.Array<Swift.UInt8>? = nil, keyLength: Swift.Int? = nil, variant: InstalibSDKFramework.HMAC.Variant = .sha256) throws
   public func calculate() throws -> Swift.Array<Swift.UInt8>
 }
-extension String {
+extension Swift.String {
   @inlinable public var bytes: Swift.Array<Swift.UInt8> {
     get {
     data(using: String.Encoding.utf8, allowLossyConversion: true)?.bytes ?? Array(utf8)
@@ -4523,7 +4642,7 @@ public class PublicKey : InstalibSDKFramework.SwiftyKey {
   public static func publicKeys(pemEncoded pemString: Swift.String) -> [InstalibSDKFramework.PublicKey]
   @objc deinit
 }
-extension Date : InstalibSDKFramework.Value {
+extension Foundation.Date : InstalibSDKFramework.Value {
   public static var declaredDatatype: Swift.String {
     get
   }
@@ -4531,8 +4650,8 @@ extension Date : InstalibSDKFramework.Value {
   public var datatypeValue: Swift.String {
     get
   }
-  public typealias ValueType = Foundation.Date
   public typealias Datatype = Swift.String
+  public typealias ValueType = Foundation.Date
 }
 public var dateFormatter: Foundation.DateFormatter
 @_hasMissingDesignatedInitializers public class DateFunctions {
@@ -4543,7 +4662,7 @@ public var dateFormatter: Foundation.DateFormatter
   public static func strftime(_ format: Swift.String, _ timestring: Swift.String, _ modifiers: Swift.String...) -> InstalibSDKFramework.Expression<Foundation.Date?>
   @objc deinit
 }
-extension Date {
+extension Foundation.Date {
   public var date: InstalibSDKFramework.Expression<Foundation.Date?> {
     get
   }
@@ -4557,7 +4676,7 @@ extension Date {
     get
   }
 }
-extension Expression where Datatype == Foundation.Date {
+extension InstalibSDKFramework.Expression where Datatype == Foundation.Date {
   public var date: InstalibSDKFramework.Expression<Foundation.Date> {
     get
   }
@@ -4579,10 +4698,10 @@ public class Signature {
     case sha384
     case sha512
     public static func == (a: InstalibSDKFramework.Signature.DigestType, b: InstalibSDKFramework.Signature.DigestType) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
     public var hashValue: Swift.Int {
       get
     }
-    public func hash(into hasher: inout Swift.Hasher)
   }
   final public let data: Foundation.Data
   public init(data: Foundation.Data)
@@ -4604,34 +4723,34 @@ public enum DynamicRequest : Swift.Equatable {
   }
   public static func == (a: InstalibSDKFramework.DynamicRequest, b: InstalibSDKFramework.DynamicRequest) -> Swift.Bool
 }
-extension DynamicRequest : Swift.ExpressibleByArrayLiteral {
+extension InstalibSDKFramework.DynamicRequest : Swift.ExpressibleByArrayLiteral {
   public init(arrayLiteral elements: Any...)
   public typealias ArrayLiteralElement = Any
 }
-extension DynamicRequest : Swift.ExpressibleByBooleanLiteral {
+extension InstalibSDKFramework.DynamicRequest : Swift.ExpressibleByBooleanLiteral {
   public init(booleanLiteral value: Swift.BooleanLiteralType)
   public typealias BooleanLiteralType = Swift.BooleanLiteralType
 }
-extension DynamicRequest : Swift.ExpressibleByDictionaryLiteral {
+extension InstalibSDKFramework.DynamicRequest : Swift.ExpressibleByDictionaryLiteral {
   public init(dictionaryLiteral elements: (Swift.String, Any)...)
   public typealias Key = Swift.String
   public typealias Value = Any
 }
-extension DynamicRequest : Swift.ExpressibleByFloatLiteral {
+extension InstalibSDKFramework.DynamicRequest : Swift.ExpressibleByFloatLiteral {
   public init(floatLiteral value: Swift.FloatLiteralType)
   public typealias FloatLiteralType = Swift.FloatLiteralType
 }
-extension DynamicRequest : Swift.ExpressibleByIntegerLiteral {
+extension InstalibSDKFramework.DynamicRequest : Swift.ExpressibleByIntegerLiteral {
   public init(integerLiteral value: Swift.IntegerLiteralType)
   public typealias IntegerLiteralType = Swift.IntegerLiteralType
 }
-extension DynamicRequest : Swift.ExpressibleByNilLiteral {
+extension InstalibSDKFramework.DynamicRequest : Swift.ExpressibleByNilLiteral {
   public init(nilLiteral: ())
 }
-extension DynamicRequest : Swift.ExpressibleByStringLiteral {
+extension InstalibSDKFramework.DynamicRequest : Swift.ExpressibleByStringLiteral {
   public init(stringLiteral value: Swift.StringLiteralType)
-  public typealias StringLiteralType = Swift.StringLiteralType
   public typealias ExtendedGraphemeClusterLiteralType = Swift.StringLiteralType
+  public typealias StringLiteralType = Swift.StringLiteralType
   public typealias UnicodeScalarLiteralType = Swift.StringLiteralType
 }
 public protocol SwiftyRSAMessage {
@@ -4640,13 +4759,13 @@ public protocol SwiftyRSAMessage {
   init(data: Foundation.Data)
   init(base64Encoded base64String: Swift.String) throws
 }
-extension SwiftyRSAMessage {
+extension InstalibSDKFramework.SwiftyRSAMessage {
   public var base64String: Swift.String {
     get
   }
   public init(base64Encoded base64String: Swift.String) throws
 }
-extension HMAC {
+extension InstalibSDKFramework.HMAC {
   convenience public init(key: Swift.String, variant: InstalibSDKFramework.HMAC.Variant = .md5) throws
 }
 public struct StoryLocation : InstalibSDKFramework.IdentifiableParsedResponse {
@@ -4683,16 +4802,16 @@ public struct Identifier<Element> : Swift.Hashable {
   public init(primaryKey: Swift.Int? = nil, identifier: Swift.String? = nil)
   public func primaryKey(_ primaryKey: Swift.Int) -> InstalibSDKFramework.Identifier<Element>
   public func identifier(_ identifier: Swift.String) -> InstalibSDKFramework.Identifier<Element>
+  public func hash(into hasher: inout Swift.Hasher)
+  public static func == (a: InstalibSDKFramework.Identifier<Element>, b: InstalibSDKFramework.Identifier<Element>) -> Swift.Bool
   public var hashValue: Swift.Int {
     get
   }
-  public func hash(into hasher: inout Swift.Hasher)
-  public static func == (a: InstalibSDKFramework.Identifier<Element>, b: InstalibSDKFramework.Identifier<Element>) -> Swift.Bool
 }
 public protocol IdentifiableParsedResponse : InstalibSDKFramework.ParsedResponse {
   var identity: Self.Identity { get }
 }
-extension IdentifiableParsedResponse {
+extension InstalibSDKFramework.IdentifiableParsedResponse {
   public typealias Identity = InstalibSDKFramework.Identifier<Self>
   public var identity: InstalibSDKFramework.Identifier<Self> {
     get
@@ -4701,7 +4820,7 @@ extension IdentifiableParsedResponse {
 public protocol UserIdentifiableParsedResponse : InstalibSDKFramework.ParsedResponse {
   var userIdentity: InstalibSDKFramework.Identifier<InstalibSDKFramework.User> { get }
 }
-extension UserIdentifiableParsedResponse {
+extension InstalibSDKFramework.UserIdentifiableParsedResponse {
   public var userIdentity: InstalibSDKFramework.Identifier<InstalibSDKFramework.User> {
     get
   }
@@ -4709,7 +4828,7 @@ extension UserIdentifiableParsedResponse {
 public protocol ThreadIdentifiableParsedResponse : InstalibSDKFramework.ParsedResponse {
   var threadIdentifier: InstalibSDKFramework.Identifier<InstalibSDKFramework.Thread> { get }
 }
-extension ThreadIdentifiableParsedResponse {
+extension InstalibSDKFramework.ThreadIdentifiableParsedResponse {
   public var threadIdentifier: InstalibSDKFramework.Identifier<InstalibSDKFramework.Thread> {
     get
   }
@@ -4720,7 +4839,7 @@ extension ThreadIdentifiableParsedResponse {
 public protocol ItemIdentifiableParsedResponse : InstalibSDKFramework.ParsedResponse {
   var itemIdentifier: InstalibSDKFramework.Identifier<InstalibSDKFramework.Message> { get }
 }
-extension ItemIdentifiableParsedResponse {
+extension InstalibSDKFramework.ItemIdentifiableParsedResponse {
   public var itemIdentifier: InstalibSDKFramework.Identifier<InstalibSDKFramework.Message> {
     get
   }
@@ -4728,17 +4847,17 @@ extension ItemIdentifiableParsedResponse {
 public protocol CoverIdentifiableParsedResponse : InstalibSDKFramework.ParsedResponse {
   var mediaIdentifier: InstalibSDKFramework.Identifier<InstalibSDKFramework.Media> { get }
 }
-extension CoverIdentifiableParsedResponse {
+extension InstalibSDKFramework.CoverIdentifiableParsedResponse {
   public var mediaIdentifier: InstalibSDKFramework.Identifier<InstalibSDKFramework.Media> {
     get
   }
 }
-extension Module {
+extension InstalibSDKFramework.Module {
   public static func FTS4(_ column: InstalibSDKFramework.Expressible, _ more: InstalibSDKFramework.Expressible...) -> InstalibSDKFramework.Module
   public static func FTS4(_ columns: [InstalibSDKFramework.Expressible] = [], tokenize tokenizer: InstalibSDKFramework.Tokenizer? = nil) -> InstalibSDKFramework.Module
   public static func FTS4(_ config: InstalibSDKFramework.FTS4Config) -> InstalibSDKFramework.Module
 }
-extension VirtualTable {
+extension InstalibSDKFramework.VirtualTable {
   public func match(_ pattern: Swift.String) -> InstalibSDKFramework.Expression<Swift.Bool>
   public func match(_ pattern: InstalibSDKFramework.Expression<Swift.String>) -> InstalibSDKFramework.Expression<Swift.Bool>
   public func match(_ pattern: InstalibSDKFramework.Expression<Swift.String?>) -> InstalibSDKFramework.Expression<Swift.Bool?>
@@ -4754,22 +4873,22 @@ public struct Tokenizer {
   public let name: Swift.String
   public let arguments: [Swift.String]
 }
-extension Tokenizer : Swift.CustomStringConvertible {
+extension InstalibSDKFramework.Tokenizer : Swift.CustomStringConvertible {
   public var description: Swift.String {
     get
   }
 }
-extension Connection {
+extension InstalibSDKFramework.Connection {
   final public func registerTokenizer(_ submoduleName: Swift.String, next: @escaping (Swift.String) -> (Swift.String, Swift.Range<Swift.String.Index>)?) throws
 }
 @_hasMissingDesignatedInitializers open class FTSConfig {
   public enum ColumnOption {
     case unindexed
     public static func == (a: InstalibSDKFramework.FTSConfig.ColumnOption, b: InstalibSDKFramework.FTSConfig.ColumnOption) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
     public var hashValue: Swift.Int {
       get
     }
-    public func hash(into hasher: inout Swift.Hasher)
   }
   @discardableResult
   open func column(_ column: InstalibSDKFramework.Expressible, _ options: [InstalibSDKFramework.FTSConfig.ColumnOption] = []) -> Self
@@ -4788,10 +4907,10 @@ extension Connection {
       get
     }
     public static func == (a: InstalibSDKFramework.FTS4Config.MatchInfo, b: InstalibSDKFramework.FTS4Config.MatchInfo) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
     public var hashValue: Swift.Int {
       get
     }
-    public func hash(into hasher: inout Swift.Hasher)
   }
   public enum Order : Swift.CustomStringConvertible {
     case asc
@@ -4800,10 +4919,10 @@ extension Connection {
       get
     }
     public static func == (a: InstalibSDKFramework.FTS4Config.Order, b: InstalibSDKFramework.FTS4Config.Order) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
     public var hashValue: Swift.Int {
       get
     }
-    public func hash(into hasher: inout Swift.Hasher)
   }
   public init()
   open func compress(_ functionName: Swift.String) -> Self
@@ -4823,16 +4942,16 @@ public struct SuggestedUserModel {
   public var isNewSuggestion: Swift.Bool
   public var logDate: Swift.Int64
 }
-extension PKCS5 {
+extension InstalibSDKFramework.PKCS5 {
   public struct PBKDF1 {
     public enum Error : Swift.Error {
       case invalidInput
       case derivedKeyTooLong
       public static func == (a: InstalibSDKFramework.PKCS5.PBKDF1.Error, b: InstalibSDKFramework.PKCS5.PBKDF1.Error) -> Swift.Bool
+      public func hash(into hasher: inout Swift.Hasher)
       public var hashValue: Swift.Int {
         get
       }
-      public func hash(into hasher: inout Swift.Hasher)
     }
     public enum Variant {
       case md5, sha1
@@ -4843,10 +4962,10 @@ extension PKCS5 {
       @usableFromInline
       internal func calculateHash(_ bytes: Swift.Array<Swift.UInt8>) -> Swift.Array<Swift.UInt8>
       public static func == (a: InstalibSDKFramework.PKCS5.PBKDF1.Variant, b: InstalibSDKFramework.PKCS5.PBKDF1.Variant) -> Swift.Bool
+      public func hash(into hasher: inout Swift.Hasher)
       public var hashValue: Swift.Int {
         get
       }
-      public func hash(into hasher: inout Swift.Hasher)
     }
     @usableFromInline
     internal let iterations: Swift.Int
@@ -4869,7 +4988,7 @@ extension PKCS5 {
 public protocol EndpointRepresentable {
   var representation: InstalibSDKFramework.LosselessEndpointRepresentable { get }
 }
-extension EndpointRepresentable {
+extension InstalibSDKFramework.EndpointRepresentable {
   public func url() throws -> Foundation.URL
   public func user(_ userPk: Swift.Int) -> InstalibSDKFramework.EndpointRepresentable!
   public func user(_ username: Swift.String) -> InstalibSDKFramework.EndpointRepresentable!
@@ -4897,14 +5016,14 @@ public protocol LosselessEndpointRepresentable : InstalibSDKFramework.EndpointRe
   func query<L>(_ items: [Swift.String : L]) -> InstalibSDKFramework.LosselessEndpointRepresentable! where L : Swift.LosslessStringConvertible
   func appending(_ path: Swift.String) -> InstalibSDKFramework.LosselessEndpointRepresentable!
 }
-extension LosselessEndpointRepresentable {
+extension InstalibSDKFramework.LosselessEndpointRepresentable {
   public var representation: InstalibSDKFramework.LosselessEndpointRepresentable {
     get
   }
 }
 public protocol RawEndpointRepresentable : InstalibSDKFramework.EndpointRepresentable, Swift.RawRepresentable where Self.RawValue : InstalibSDKFramework.LosselessEndpointRepresentable {
 }
-extension RawEndpointRepresentable {
+extension InstalibSDKFramework.RawEndpointRepresentable {
   public var representation: InstalibSDKFramework.LosselessEndpointRepresentable {
     get
   }
@@ -4936,7 +5055,7 @@ public enum Upload {
   case picture(InstalibSDKFramework.Upload.Picture)
   case video(InstalibSDKFramework.Upload.Video)
 }
-extension User {
+extension InstalibSDKFramework.User {
   public struct Tag : Swift.Codable {
     public let userId: Swift.Int
     public let position: CoreGraphics.CGPoint
@@ -4947,18 +5066,18 @@ extension User {
   public struct Tags : Swift.Codable {
     public let adding: [InstalibSDKFramework.User.Tag]
     public let removing: [Swift.Int]
-    public init(from decoder: Swift.Decoder) throws
     public func encode(to encoder: Swift.Encoder) throws
+    public init(from decoder: Swift.Decoder) throws
   }
 }
 public struct CTR {
   public enum Error : Swift.Error {
     case invalidInitializationVector
     public static func == (a: InstalibSDKFramework.CTR.Error, b: InstalibSDKFramework.CTR.Error) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
     public var hashValue: Swift.Int {
       get
     }
-    public func hash(into hasher: inout Swift.Hasher)
   }
   public let options: InstalibSDKFramework.BlockModeOption
   public let customBlockSize: Swift.Int?
@@ -4968,7 +5087,7 @@ public struct CTR {
 public struct Authentication {
   public enum Request {
     case user(InstalibSDKFramework.Credentials)
-    @available(iOS 11, OSX 10.13, macCatalyst 13, *)
+    @available(iOS 11, macOS 10.13, macCatalyst 13, *)
     case webView(InstalibSDKFramework.LoginWebView)
     case cache(InstalibSDKFramework.Authentication.Response)
   }
@@ -4987,8 +5106,8 @@ public struct Authentication {
     public static func invalidate(persistedWithKey key: Swift.String) -> Swift.Bool
     @discardableResult
     public func invalidate() -> Swift.Bool
-    public init(from decoder: Swift.Decoder) throws
     public func encode(to encoder: Swift.Encoder) throws
+    public init(from decoder: Swift.Decoder) throws
   }
   public struct Storage : Swift.Codable {
     public var dsUserId: Swift.String
@@ -4997,8 +5116,8 @@ public struct Authentication {
     public var rankToken: Swift.String
     public var user: InstalibSDKFramework.User?
     public init(dsUserId: Swift.String, csrfToken: Swift.String, sessionId: Swift.String, rankToken: Swift.String, user: InstalibSDKFramework.User?)
-    public init(from decoder: Swift.Decoder) throws
     public func encode(to encoder: Swift.Encoder) throws
+    public init(from decoder: Swift.Decoder) throws
   }
 }
 public class ClearMessage : InstalibSDKFramework.SwiftyRSAMessage {
@@ -5033,7 +5152,7 @@ public struct UserDashboardDetailView {
   public var totalCommentDeleteCount: Swift.Int
   public var totalLikeDeleteCount: Swift.Int
 }
-extension Module {
+extension InstalibSDKFramework.Module {
   public static func FTS5(_ config: InstalibSDKFramework.FTS5Config) -> InstalibSDKFramework.Module
 }
 @_inheritsConvenienceInitializers open class FTS5Config : InstalibSDKFramework.FTSConfig {
@@ -5045,10 +5164,10 @@ extension Module {
       get
     }
     public static func == (a: InstalibSDKFramework.FTS5Config.Detail, b: InstalibSDKFramework.FTS5Config.Detail) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
     public var hashValue: Swift.Int {
       get
     }
-    public func hash(into hasher: inout Swift.Hasher)
   }
   public init()
   open func contentRowId(_ column: InstalibSDKFramework.Expressible) -> Self
@@ -5127,10 +5246,10 @@ final public class Poly1305 : InstalibSDKFramework.Authenticator {
   public enum Error : Swift.Error {
     case authenticateError
     public static func == (a: InstalibSDKFramework.Poly1305.Error, b: InstalibSDKFramework.Poly1305.Error) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
     public var hashValue: Swift.Int {
       get
     }
-    public func hash(into hasher: inout Swift.Hasher)
   }
   public static let blockSize: Swift.Int
   public init(key: Swift.Array<Swift.UInt8>)
@@ -5150,10 +5269,10 @@ final public class Connection {
     case update
     case delete
     public static func == (a: InstalibSDKFramework.Connection.Operation, b: InstalibSDKFramework.Connection.Operation) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
     public var hashValue: Swift.Int {
       get
     }
-    public func hash(into hasher: inout Swift.Hasher)
   }
   final public var handle: Swift.OpaquePointer {
     get
@@ -5190,8 +5309,8 @@ final public class Connection {
     case deferred
     case immediate
     case exclusive
-    public typealias RawValue = Swift.String
     public init?(rawValue: Swift.String)
+    public typealias RawValue = Swift.String
     public var rawValue: Swift.String {
       get
     }
@@ -5203,20 +5322,20 @@ final public class Connection {
     get
     set
   }
-  final public func busyHandler(_ callback: ((Swift.Int) -> Swift.Bool)?)
+  final public func busyHandler(_ callback: ((_ tries: Swift.Int) -> Swift.Bool)?)
   final public func trace(_ callback: ((Swift.String) -> Swift.Void)?)
-  final public func updateHook(_ callback: ((InstalibSDKFramework.Connection.Operation, Swift.String, Swift.String, Swift.Int64) -> Swift.Void)?)
+  final public func updateHook(_ callback: ((_ operation: InstalibSDKFramework.Connection.Operation, _ db: Swift.String, _ table: Swift.String, _ rowid: Swift.Int64) -> Swift.Void)?)
   final public func commitHook(_ callback: (() throws -> Swift.Void)?)
   final public func rollbackHook(_ callback: (() -> Swift.Void)?)
-  final public func createFunction(_ function: Swift.String, argumentCount: Swift.UInt? = nil, deterministic: Swift.Bool = false, _ block: @escaping ([InstalibSDKFramework.SQLiteBinding?]) -> InstalibSDKFramework.SQLiteBinding?)
-  final public func createCollation(_ collation: Swift.String, _ block: @escaping (Swift.String, Swift.String) -> Foundation.ComparisonResult) throws
+  final public func createFunction(_ function: Swift.String, argumentCount: Swift.UInt? = nil, deterministic: Swift.Bool = false, _ block: @escaping (_ args: [InstalibSDKFramework.SQLiteBinding?]) -> InstalibSDKFramework.SQLiteBinding?)
+  final public func createCollation(_ collation: Swift.String, _ block: @escaping (_ lhs: Swift.String, _ rhs: Swift.String) -> Foundation.ComparisonResult) throws
 }
-extension Connection : Swift.CustomStringConvertible {
+extension InstalibSDKFramework.Connection : Swift.CustomStringConvertible {
   final public var description: Swift.String {
     get
   }
 }
-extension Connection.Location : Swift.CustomStringConvertible {
+extension InstalibSDKFramework.Connection.Location : Swift.CustomStringConvertible {
   public var description: Swift.String {
     get
   }
@@ -5224,12 +5343,12 @@ extension Connection.Location : Swift.CustomStringConvertible {
 public enum SqliteResult : Swift.Error {
   case error(message: Swift.String, code: Swift.Int32, statement: InstalibSDKFramework.Statement?)
 }
-extension SqliteResult : Swift.CustomStringConvertible {
+extension InstalibSDKFramework.SqliteResult : Swift.CustomStringConvertible {
   public var description: Swift.String {
     get
   }
 }
-extension Rabbit {
+extension InstalibSDKFramework.Rabbit {
   convenience public init(key: Swift.String) throws
   convenience public init(key: Swift.String, iv: Swift.String) throws
 }
@@ -5237,10 +5356,10 @@ final public class Rabbit {
   public enum Error : Swift.Error {
     case invalidKeyOrInitializationVector
     public static func == (a: InstalibSDKFramework.Rabbit.Error, b: InstalibSDKFramework.Rabbit.Error) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
     public var hashValue: Swift.Int {
       get
     }
-    public func hash(into hasher: inout Swift.Hasher)
   }
   public static let ivSize: Swift.Int
   public static let keySize: Swift.Int
@@ -5252,7 +5371,7 @@ final public class Rabbit {
   public init(key: Swift.Array<Swift.UInt8>, iv: Swift.Array<Swift.UInt8>?) throws
   @objc deinit
 }
-extension Rabbit : InstalibSDKFramework.Cipher {
+extension InstalibSDKFramework.Rabbit : InstalibSDKFramework.Cipher {
   final public func encrypt(_ bytes: Swift.ArraySlice<Swift.UInt8>) throws -> Swift.Array<Swift.UInt8>
   final public func decrypt(_ bytes: Swift.ArraySlice<Swift.UInt8>) throws -> Swift.Array<Swift.UInt8>
 }
@@ -5267,12 +5386,12 @@ public struct ConfigureStoryUploadModel : Swift.Codable {
   public var configureMode: Swift.Int
   public var cameraPosition: Swift.String
   public init(uuid: Swift.String, uid: Swift.String, csrfToken: Swift.String, sourceType: Swift.String, caption: Swift.String, uploadId: Swift.String, disableComments: Swift.Bool, configureMode: Swift.Int, cameraPosition: Swift.String)
-  public init(from decoder: Swift.Decoder) throws
   public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct SeenStory : Swift.Codable {
-  public init(from decoder: Swift.Decoder) throws
   public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct EngagedUserModel {
   public init()
@@ -5302,7 +5421,7 @@ public struct EngagedUserWithMetadataModel {
   public init()
   public init(userMetadataModel: InstalibSDKFramework.InstaUserMetadataModel, engagedUserModel: InstalibSDKFramework.EngagedUserModel)
 }
-extension Upload {
+extension InstalibSDKFramework.Upload {
   public struct Response {
     public struct Picture : InstalibSDKFramework.ParsedResponse {
       public init?(rawResponse: InstalibSDKFramework.DynamicResponse)
@@ -5363,7 +5482,7 @@ extension Upload {
     }
   }
 }
-extension Upload.Response.Video {
+extension InstalibSDKFramework.Upload.Response.Video {
   public struct URL : InstalibSDKFramework.ParsedResponse {
     public init?(rawResponse: InstalibSDKFramework.DynamicResponse)
     public let rawResponse: InstalibSDKFramework.DynamicResponse
@@ -5384,10 +5503,10 @@ public struct OFB : InstalibSDKFramework.BlockMode {
   public enum Error : Swift.Error {
     case invalidInitializationVector
     public static func == (a: InstalibSDKFramework.OFB.Error, b: InstalibSDKFramework.OFB.Error) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
     public var hashValue: Swift.Int {
       get
     }
-    public func hash(into hasher: inout Swift.Hasher)
   }
   public let options: InstalibSDKFramework.BlockModeOption
   public let customBlockSize: Swift.Int?
@@ -5399,10 +5518,10 @@ public func * (_: InstalibSDKFramework.Expression<InstalibSDKFramework.SQLiteBin
 public protocol _OptionalType {
   associatedtype WrappedType
 }
-extension Optional : InstalibSDKFramework._OptionalType {
+extension Swift.Optional : InstalibSDKFramework._OptionalType {
   public typealias WrappedType = Wrapped
 }
-extension Array where Element == Swift.UInt8 {
+extension Swift.Array where Element == Swift.UInt8 {
   public func toBase64() -> Swift.String?
   public init(base64: Swift.String)
 }
@@ -5411,7 +5530,7 @@ public protocol Cryptors : AnyObject {
   func makeDecryptor() throws -> InstalibSDKFramework.Cryptor & InstalibSDKFramework.Updatable
   static func randomIV(_ blockSize: Swift.Int) -> Swift.Array<Swift.UInt8>
 }
-extension Cryptors {
+extension InstalibSDKFramework.Cryptors {
   public static func randomIV(_ count: Swift.Int) -> Swift.Array<Swift.UInt8>
 }
 extension InstalibSDKFramework.Padding : Swift.Equatable {}
