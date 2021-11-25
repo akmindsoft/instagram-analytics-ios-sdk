@@ -1,5 +1,5 @@
 // swift-interface-format-version: 1.0
-// swift-compiler-version: Apple Swift version 5.5 (swiftlang-1300.0.31.1 clang-1300.0.29.1)
+// swift-compiler-version: Apple Swift version 5.5.1 (swiftlang-1300.0.31.4 clang-1300.0.29.6)
 // swift-module-flags: -target arm64-apple-ios12.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name InstalibSDKFramework
 import CoreGraphics
 import Darwin
@@ -658,7 +658,7 @@ extension Swift.UInt8 {
   public func bits() -> [InstalibSDKFramework.Bit]
   public func bits() -> Swift.String
 }
-public struct AppUserModel {
+public struct AppUserModel : Swift.Codable {
   public init()
   public var uid: Swift.Int
   public var userId: Swift.Int64?
@@ -671,6 +671,8 @@ public struct AppUserModel {
   public var isDataInit: Swift.Bool
   public var isMediaDataInit: Swift.Bool
   public var createdAt: Swift.Int64?
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers final public class CommentHandler : InstalibSDKFramework.Handler {
   final public func all(forMedia mediaId: Swift.String, with paginationParameters: InstalibSDKFramework.PaginationParameters, updateHandler: InstalibSDKFramework.PaginationUpdateHandler<InstalibSDKFramework.Comment, InstalibSDKFramework.MediaComments>?, completionHandler: @escaping InstalibSDKFramework.PaginationCompletionHandler<InstalibSDKFramework.Comment>)
@@ -1513,7 +1515,7 @@ public struct UserCounterModel {
   public var userId: Swift.Int64
   public var count: Swift.Int
 }
-public struct UserStatsModel {
+public struct UserStatsModel : Swift.Codable {
   public init()
   public var userId: Swift.Int64
   public var dateId: Swift.Int64
@@ -1536,6 +1538,8 @@ public struct UserStatsModel {
   public var deletedLikesCount: Swift.Int?
   public var logDate: Swift.Int64
   public var weekMonthYear: Swift.String?
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 @objc @_hasMissingDesignatedInitializers @available(iOS 12, *)
 @_Concurrency.MainActor(unsafe) public class LoginWebViewController : UIKit.UIViewController {
@@ -2535,6 +2539,8 @@ public protocol IRepository {
   func deleteBookmark(_ model: InstalibSDKFramework.EngagedUserBookmarkedModel)
   func getEngagedUserSync(userId: Swift.Int64) -> InstalibSDKFramework.EngagedUserModel?
   func updateEngagedUserSync(model: InstalibSDKFramework.EngagedUserModel)
+  func prepareDemoData(appUser: InstalibSDKFramework.AppUserModel, engagedUsers: [InstalibSDKFramework.EngagedUserModel], instaUsersMeta: [InstalibSDKFramework.InstaUserMetadataModel], userStats: [InstalibSDKFramework.UserStatsModel])
+  func getIsDemoMode() -> Swift.Bool
 }
 public struct MediaCommenterModel {
   public init()
@@ -2641,7 +2647,7 @@ extension Swift.String {
   public func decryptBase64ToString(cipher: InstalibSDKFramework.Cipher) throws -> Swift.String
   public func decryptBase64(cipher: InstalibSDKFramework.Cipher) throws -> Swift.Array<Swift.UInt8>
 }
-public struct InstaUserMetadataModel {
+public struct InstaUserMetadataModel : Swift.Codable {
   public init()
   public var userId: Swift.Int64?
   public var userName: Swift.String?
@@ -2651,6 +2657,8 @@ public struct InstaUserMetadataModel {
   public var isVerified: Swift.Bool?
   public var isAccountDeletedOrDisabled: Swift.Bool?
   public var lastUpdateDate: Swift.Int64
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 @_inheritsConvenienceInitializers final public class CBCMAC : InstalibSDKFramework.CMAC {
   override final public func authenticate(_ bytes: Swift.Array<Swift.UInt8>) throws -> Swift.Array<Swift.UInt8>
@@ -5393,7 +5401,7 @@ public struct SeenStory : Swift.Codable {
   public func encode(to encoder: Swift.Encoder) throws
   public init(from decoder: Swift.Decoder) throws
 }
-public struct EngagedUserModel {
+public struct EngagedUserModel : Swift.Codable {
   public init()
   public var userId: Swift.Int64
   public var ownerUserId: Swift.Int64
@@ -5414,6 +5422,8 @@ public struct EngagedUserModel {
   public var isBlockedByMe: Swift.Bool
   public var lastFollowStatChageDate: Swift.Int64
   public var followerIndex: Swift.Int64?
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct EngagedUserWithMetadataModel {
   public var userMetadataModel: InstalibSDKFramework.InstaUserMetadataModel?
